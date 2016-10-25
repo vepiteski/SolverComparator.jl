@@ -7,7 +7,7 @@ using NLPModels
 using Optimize
 
 include("compare_solvers.jl")
-export compare_solvers
+export compare_solvers, compare_solvers_Ampl
 
 include("solvers.jl")
 
