@@ -32,10 +32,10 @@ n_max = 1000
 
 
 
-solvers1 = [LD_LBFGS, Ipopt_LBFGSMPB, LbfgsB, lbfgs]
+solvers1 = [LD_LBFGS, LbfgsB, lbfgs]
 s1, P1 = compare_solvers_Ampl(solvers1, ampl_probs, title = "First order: #f + #g ")
 
-solvers2 = [ARCMA97_abs, ARCLDLt_abs, IpoptMPB]
+solvers2 = [ARCMA97_abs, ARCLDLt_abs]
 n_max = 100
 s2, P2 = compare_solvers_Ampl(solvers2, ampl_probs, title = "Second order but only #f + #g ")
 
