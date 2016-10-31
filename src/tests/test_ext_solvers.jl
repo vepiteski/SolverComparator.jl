@@ -21,21 +21,22 @@ include("../ExtSolvers/solvers.jl")
 
 Ext_solvers = NLoptSolvers ∪ IpoptSolvers# ∪ [LbfgsB]
 
-model = MathProgNLPModel(genrose(2))
 
 for s in Ext_solvers
     @printf(" executing solver %s on JuMP genrose(2)\n",string(s))
+    model = MathProgNLPModel(genrose(2))
     (x, f, gNorm, iterB, optimal, tired, status) = s(model)
     @printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
+    finalize(model)
 end
 
 cmd_dir, bidon = splitdir(@__FILE__())
-ampl_dir = string(cmd_dir,"/../ampl")
-model = AmplModel(string(ampl_dir,"/rosenbr"))
 
 for s in Ext_solvers
+    model = AmplModel(string(cmd_dir,"/rosenbr"))
     @printf(" executing solver %s on Ampl rosenbr\n",string(s))
     (x, f, gNorm, iterB, optimal, tired, status) = s(model)
     @printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
+    fialize(model)
 end
 
