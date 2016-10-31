@@ -1,12 +1,12 @@
 using AmplNLReader
 #nlp = AmplModel("../ampl/msqrtals")  # loads the msqrtals.nl model
-nlp = AmplModel("../ampl/curly10")  # loads the msqrtals.nl model
+nlp = AmplModel("../ampl/curly10",safe=true)  # loads the msqrtals.nl model
 nvar = nlp.meta.nvar
 x0 = nlp.meta.x0
 
 Hg = copy(x0) # allocate once
-
-nbt=100000
+g = grad(nlp,x0)
+nbt=10000
 @printf("evaluating %d times the Hv product\n",nbt)
 for i=1:nbt
     Hg = hprod!(nlp, x0, x0, Hg)
