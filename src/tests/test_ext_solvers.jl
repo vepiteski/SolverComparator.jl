@@ -15,10 +15,11 @@ include("../ExtSolvers/solvers.jl")
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
-using Lbfgsb
-include("../ExtSolvers/L-BFGS-B.jl")
+# uncomment if you have access to L-BFGS-B
+#using Lbfgsb
+#include("../ExtSolvers/L-BFGS-B.jl")
 
-Ext_solvers = NLoptSolvers ∪ IpoptSolvers ∪ [LbfgsB]
+Ext_solvers = NLoptSolvers ∪ IpoptSolvers# ∪ [LbfgsB]
 
 model = MathProgNLPModel(genrose(2))
 
