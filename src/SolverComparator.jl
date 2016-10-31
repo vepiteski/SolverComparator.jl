@@ -1,11 +1,11 @@
 module SolverComparator
 
-using OptimizationProblems
+#using OptimizationProblems
 using JuMP
 using NLPModels
 using AmplNLReader
 
-using Optimize
+#using Optimize
 
 include("compare_solvers.jl")
 export compare_solvers, compare_solvers_Ampl, compare_solvers_CUTEst
