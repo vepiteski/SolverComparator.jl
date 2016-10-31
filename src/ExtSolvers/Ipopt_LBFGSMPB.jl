@@ -9,6 +9,7 @@ function Ipopt_LBFGSMPB(nlp :: AbstractNLPModel;
     
     IpoptModel = NLPtoMPB(nlp, 
                           IpoptSolver(hessian_approximation="limited-memory",
+                                      limited_memory_max_history=5,
                                       print_level = 0,
                                       max_iter = itmax,
                                       tol = rtol)
@@ -16,6 +17,8 @@ function Ipopt_LBFGSMPB(nlp :: AbstractNLPModel;
     
     x0 = nlp.meta.x0
     g0 = grad(nlp,x0)
+    norm_g0 = norm(g0,Inf)
+    ϵ = atol + rtol * norm_g0
     ret = MathProgBase.optimize!(IpoptModel)
     
     minx = IpoptModel.inner.x
@@ -27,7 +30,7 @@ function Ipopt_LBFGSMPB(nlp :: AbstractNLPModel;
     
     iter = nlp.counters.neval_obj
     
-    optimal = (norm_g < atol)|| (norm_g < (rtol * norm(g0))) || (isinf(minf) & (minf<0.0))
+    optimal = (norm_g < ϵ) || (isinf(minf) & (minf<0.0))
     
     if optimal status = :Optimal
     else status = ret

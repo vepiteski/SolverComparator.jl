@@ -1,4 +1,4 @@
-function IpoptMPB(nlp :: AbstractNLPModel;
+function Ipopt_NMPB(nlp :: AbstractNLPModel;
                         atol :: Float64 = 1e-8,
                         rtol :: Float64 = 1.0e-6,
                         itmax :: Int=5000, 
@@ -15,6 +15,8 @@ function IpoptMPB(nlp :: AbstractNLPModel;
     
     x0 = nlp.meta.x0
     g0 = grad(nlp,x0)
+    norm_g0 = norm(g0,Inf)
+    ϵ = atol + rtol * norm_g0
     ret = MathProgBase.optimize!(IpoptModel)
     
     minx = IpoptModel.inner.x
@@ -26,7 +28,7 @@ function IpoptMPB(nlp :: AbstractNLPModel;
     
     iter = nlp.counters.neval_obj
     
-    optimal = (norm_g < atol)|| (norm_g < (rtol * norm(g0))) || (isinf(minf) & (minf<0.0))
+    optimal = (norm_g < ϵ) || (isinf(minf) & (minf<0.0))
     
     if optimal status = :Optimal
     else status = ret
