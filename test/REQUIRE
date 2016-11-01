@@ -3,4 +3,4 @@ JuMP
 NLPModels
 #AmplNLReader
 NLopt
-#Ipopt
+Ipopt

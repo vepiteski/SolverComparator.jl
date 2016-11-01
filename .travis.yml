@@ -13,15 +13,15 @@ addons:
   apt_packages:
     - gfortran
 
-before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gcc; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-    wget --no-check-certificate http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz;
-    tar -xzf cmake-3.3.2-Linux-x86_64.tar.gz;
-    sudo cp -fR cmake-3.3.2-Linux-x86_64/* /usr;
-    export PATH=`pwd`/cmake-3.3.2-Linux-x86_64/bin:$PATH;
-    unset DYLD_LIBRARY_PATH;
-    sudo ln -s /usr/lib/gcc/x86_64-linux-gnu/$(gfortran -dumpversion | cut -f1,2 -d.)/libgfortran.so /usr/local/lib; fi
+#before_install:
+#  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gcc; fi
+#  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+#    wget --no-check-certificate http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz;
+#    tar -xzf cmake-3.3.2-Linux-x86_64.tar.gz;
+#    sudo cp -fR cmake-3.3.2-Linux-x86_64/* /usr;
+#    export PATH=`pwd`/cmake-3.3.2-Linux-x86_64/bin:$PATH;
+#    unset DYLD_LIBRARY_PATH;
+#    sudo ln -s /usr/lib/gcc/x86_64-linux-gnu/$(gfortran -dumpversion | cut -f1,2 -d.)/libgfortran.so /u#sr/local/lib; fi
 
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
