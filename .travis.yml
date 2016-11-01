@@ -8,10 +8,20 @@ julia:
   - nightly
 notifications:
   email: false
-# uncomment the following lines to override the default test script
-#script:
-#  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-#  - julia -e 'Pkg.clone(pwd()); Pkg.build("SolverComparator"); Pkg.test("SolverComparator"; coverage=true)'
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gcc; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
+    wget --no-check-certificate http://www.cmake.org/files/v3.3/cmake-3.3.2-Linux-x86_64.tar.gz;
+    tar -xzf cmake-3.3.2-Linux-x86_64.tar.gz;
+    sudo cp -fR cmake-3.3.2-Linux-x86_64/* /usr;
+    export PATH=`pwd`/cmake-3.3.2-Linux-x86_64/bin:$PATH;
+    unset DYLD_LIBRARY_PATH;
+    sudo ln -s /usr/lib/gcc/x86_64-linux-gnu/$(gfortran -dumpversion | cut -f1,2 -d.)/libgfortran.so /usr/local/lib; fi
+
+script:
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia -e 'Pkg.clone(pwd()); Pkg.build("SolverComparator"); Pkg.test("SolverComparator"; coverage=true)'
 after_success:
   # push coverage results to Coveralls
   - julia -e 'cd(Pkg.dir("SolverComparator")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
