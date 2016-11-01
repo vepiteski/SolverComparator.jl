@@ -22,9 +22,9 @@ gHg1 = dot(g1, hprod(nlp1, x0, g1))
 @printf("∇f(x₀)ᵀ ∇²f(x₀) ∇f(x₀) = %8.1e\n", gHg1)
 
 using AmplNLReader
-cmd_dir, bidon = splitdir(@__FILE__())
-ampl_dir = string(cmd_dir,"/../ampl")
-nlp2 = AmplModel(string(ampl_dir,"/",msqrtals))
+ampl_dir, bidon = splitdir(@__FILE__())
+nlp2 = AmplModel(string(ampl_dir,"/msqrtals"))
+
 nvar = nlp2.meta.nvar
 x1 = nlp2.meta.x0
 @printf("x0 differences = %7d\n",norm(x0-x1))
