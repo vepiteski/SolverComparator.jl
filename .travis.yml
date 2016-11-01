@@ -9,6 +9,10 @@ julia:
 notifications:
   email: false
 
+addons:
+  apt_packages:
+    - gfortran
+
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gcc; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
