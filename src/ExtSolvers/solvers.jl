@@ -6,7 +6,7 @@ include("NLoptSolvers.jl")
 IpoptSolvers = Function[]
 
 using Ipopt
-#include("Ipopt_LBFGSMPB.jl")
-#push!(IpoptSolvers,Ipopt_LBFGSMPB)
-#include("Ipopt_NMPB.jl")
-#push!(IpoptSolvers,Ipopt_NMPB)
+include("Ipopt_LBFGSMPB.jl")
+push!(IpoptSolvers,Ipopt_LBFGSMPB)
+include("Ipopt_NMPB.jl")
+push!(IpoptSolvers,Ipopt_NMPB)
