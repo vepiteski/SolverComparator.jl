@@ -10,8 +10,8 @@ include("../ExtSolvers/solvers.jl")
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
-using Lbfgsb
-include("../ExtSolvers/L-BFGS-B.jl")
+#using Lbfgsb
+#include("../ExtSolvers/L-BFGS-B.jl")
 
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
@@ -26,7 +26,7 @@ using ARCTR
 
 using SolverComparator
 
-solvers1 = [LD_LBFGS, Ipopt_LBFGSMPB, LbfgsB, lbfgs]
+solvers1 = [lbfgs, LD_LBFGS, Ipopt_LBFGSMPB] #, LbfgsB]
 n=10
 s1, P1 = compare_solvers(solvers1, mpb_probs, n, title = "First order: #f + #g ", printskip = true)
 
