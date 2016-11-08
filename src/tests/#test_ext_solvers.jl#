@@ -9,9 +9,9 @@ using NLPModels
 # using Optimize
 
 # official julia packages:  NLopt and Ipopt
-include("../ExtSolvers/solvers.jl")
+#include("../ExtSolvers/solvers.jl")
 
-
+using SolverComparator
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad

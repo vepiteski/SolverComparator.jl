@@ -40,4 +40,6 @@
         end
         return (minx, minf, gnorm2, iter, optimal, ret == :MAXEVAL_REACHED, status)
     end
+
+    export $fname
 end
