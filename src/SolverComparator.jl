@@ -5,9 +5,9 @@ using JuMP
 using NLPModels
 using AmplNLReader
 
-#using Optimize
+using Optimize
 
 include("compare_solvers.jl")
-export compare_solvers, compare_solvers_Ampl, compare_solvers_CUTEst
+export compare_solvers
 
 end # module

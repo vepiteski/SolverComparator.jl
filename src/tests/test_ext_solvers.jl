@@ -30,13 +30,33 @@ for s in Ext_solvers
     finalize(model)
 end
 
-cmd_dir, bidon = splitdir(@__FILE__())
 
-for s in Ext_solvers
-    model = AmplModel(string(cmd_dir,"/genrose"))
-    @printf(" executing solver %s on Ampl genrose\n",string(s))
-    (x, f, gNorm, iterB, optimal, tired, status) = s(model)
-    @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
-    finalize(model)
+# For the moment, ampl complains about AmplException("Error while evaluating constraints Jacobian")
+#
+# It is a bug on my setup Ubuntu 14.04.
+#
+#
+#cmd_dir, bidon = splitdir(@__FILE__())
+
+#for s in Ext_solvers
+#    model = AmplModel(string(cmd_dir,"/genrose"))
+#    @printf(" executing solver %s on Ampl genrose\n",string(s))
+#    (x, f, gNorm, iterB, optimal, tired, status) = s(model)
+#    @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
+#    finalize(model)
+#end
+
+@static if is_unix()
+    using CUTEst
+    for s in Ext_solvers
+        model = CUTEstModel("ROSENBR")
+        @printf(" executing solver %s on CUTEst rosenbr\n",string(s))
+        (x, f, gNorm, iterB, optimal, tired, status) = s(model)
+        @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
+        finalize(model)
+    end
+    lib_so_files = [f for f in filter(x -> contains(x,".so"),readdir())]
+    for str in lib_so_files run(`rm $str `) end
+    run(`rm AUTOMAT.d`)
+    run(`rm OUTSDIF.d`)
 end
-

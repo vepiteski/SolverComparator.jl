@@ -1,45 +1,54 @@
 #using OptimizationProblems
 #using JuMP
 using NLPModels
-using AmplNLReader
+using Optimize
+using SolverComparator
+using CUTEst
 
 # official julia packages:  NLopt and Ipopt
-include("solvers.jl")
+include("../ExtSolvers/solvers.jl")
 
 
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
 using Lbfgsb
-include("L-BFGS-B.jl")
+include("../ExtSolvers/L-BFGS-B.jl")
 
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
-using Optimize
+#using Optimize
 
 
 
 # ARCTR  --  24 solvers (use at least :HessVec, some :Hess)
 using ARCTR
 
-include("compare_solvers.jl")
+#include("compare_solvers.jl")
 
 
-lprobs = open(readlines,"Unc.list")
-Nprobs = length(lprobs)
+probs = open(readlines,"CUTEstUnc.list")
+Nprobs = length(probs)
+
+lprobs = (CUTEstModel(p)  for p in probs)
 
 n_min = 1
-n_max = 100
+n_max = 10
 
 
 
 solvers1 = [LD_LBFGS, LbfgsB, lbfgs]
-s1, P1 = compare_solvers_CUTEst(solvers1, lprobs, title = "First order: #f + #g ")
+s1, P1 = compare_solvers(solvers1, lprobs, n_min, n_max, title = "First order: #f + #g ")
 
 solvers2 = [ARCMA97_abs, ARCSpectral_abs]
 n_max = 100
-s2, P2 = compare_solvers_CUTEst(solvers2, lprobs, title = "Second order but only #f + #g ")
+s2, P2 = compare_solvers(solvers2, lprobs, n_min, n_max, title = "Second order but only #f + #g ")
 
 solvers3 = [trunk, ARCqKOp, ST_TROp, TRKOp]
 n_max = 1000
-s3, P3 = compare_solvers_CUTEst(solvers3, lprobs, title = "First order: #f + #g ")
+s3, P3 = compare_solvers(solvers3, lprobs, n_min, n_max, title = "First order: #f + #g ")
+
+lib_so_files = [f for f in filter(x -> contains(x,".so"),readdir())]
+for str in lib_so_files run(`rm $str `) end
+run(`rm AUTOMAT.d`)
+run(`rm OUTSDIF.d`)
