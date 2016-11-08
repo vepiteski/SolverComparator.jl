@@ -41,5 +41,5 @@
         return (minx, minf, gnorm2, iter, optimal, ret == :MAXEVAL_REACHED, status)
     end
 
-    export $fname
+    push!(NLoptSolvers,$fname)
 end

@@ -11,7 +11,6 @@ using NLPModels
 # official julia packages:  NLopt and Ipopt
 include("../ExtSolvers/solvers.jl")
 
-
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
@@ -19,13 +18,15 @@ include("../ExtSolvers/solvers.jl")
 #using Lbfgsb
 #include("../ExtSolvers/L-BFGS-B.jl")
 
-Ext_solvers = NLoptSolvers ∪ IpoptSolvers# ∪ [LbfgsB]
+using SolverComparator
+
+Ext_solvers = IpoptSolvers ∪ NLoptSolvers  # ∪ [LbfgsB]
 include("genrose.jl")
 
 for s in Ext_solvers
     @printf(" executing solver %s on JuMP genrose(2)\n",string(s))
     model = MathProgNLPModel(genrose(2))
-    (x, f, gNorm, iterB, optimal, tired, status) = s(model)
+    (x, f, gNorm, iterB, optimal, tired, status) = eval(s)(model)
     @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
     finalize(model)
 end
@@ -51,7 +52,7 @@ end
     for s in Ext_solvers
         model = CUTEstModel("ROSENBR")
         @printf(" executing solver %s on CUTEst rosenbr\n",string(s))
-        (x, f, gNorm, iterB, optimal, tired, status) = s(model)
+        (x, f, gNorm, iterB, optimal, tired, status) = eval(s)(model)
         @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
         finalize(model)
     end

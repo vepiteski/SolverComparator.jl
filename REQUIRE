@@ -3,4 +3,6 @@ JuMP
 NLPModels
 NLopt
 Ipopt
+MathProgBase
+#Optimize
 #AmplNLReader
