@@ -16,6 +16,9 @@ include("../ExtSolvers/solvers.jl")
 
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
+
+
+n=10
 probs = filter(name -> name != :OptimizationProblems 
                    && name != :sbrybnd
                    && name != :penalty2
@@ -28,13 +31,16 @@ mpb_probs = (MathProgNLPModel(eval(p)(n),  name=string(p) )   for p in probs)
 
 
 solvers1 = [lbfgs, LD_LBFGS, Ipopt_LBFGSMPB] #, LbfgsB]
-n=10
+
+n_min = 0  # not used, OptimizationProblems may be adjusted
+n_max = n
+
+include("../compare_solvers.jl")
+
 s1, P1 = compare_solvers(solvers1, mpb_probs, n_min, n_max, title = "First order: #f + #g ", printskip = true)
 
-solvers2 = [ARCSpectral_abs, ARCMA97_abs, IpoptMPB]
-#n=2000   #  500 too large for ARCLDLt
-s2, P2 = compare_solvers(solvers2, mpb_probs, n_min, n_max,, title = "Second order but only #f + #g ")
+solvers2 = [ARCSpectral_abs, ARCMA97_abs, Ipopt_NMPB]
+s2, P2 = compare_solvers(solvers2, mpb_probs, n_min, n_max, title = "Second order but only #f + #g ")
 
 solvers3 = [LD_TNEWTON, ARCqKOp, ST_TROp, TRKOp, trunk]
-#n=10000
-s3, P3 = compare_solvers(solvers3, mpb_probs, n_min, n_max,, title = "First order: #f + #g ")
+s3, P3 = compare_solvers(solvers3, mpb_probs, n_min, n_max, title = "First order: #f + #g ")

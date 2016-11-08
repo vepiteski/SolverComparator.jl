@@ -1,5 +1,4 @@
-#using OptimizationProblems
-#using JuMP
+using Optimize
 using NLPModels
 using AmplNLReader
 
@@ -12,12 +11,11 @@ include("../ExtSolvers/solvers.jl")
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
-using Lbfgsb
-include("../ExtSolvers/L-BFGS-B.jl")
+#using Lbfgsb
+#include("../ExtSolvers/L-BFGS-B.jl")
 
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
-using Optimize
 
 
 
@@ -45,11 +43,11 @@ s1, P1 = compare_solvers(solvers1, ampl_probs, n_min, n_max, title = "First orde
 #save("s1P1.jld","s1",s1)
 
 solvers2 = [ARCMA97_abs, ARCSpectral_abs, IpoptMPB]
-#n_max = 500
-#s2, P2 = compare_solvers(solvers2, ampl_prob_dir, ampl_probs, n_min, n_max, title = "Second order but only #f + #g ")
+n_max = 500
+s2, P2 = compare_solvers(solvers2, ampl_prob_dir, ampl_probs, n_min, n_max, title = "Second order but only #f + #g ")
 #save("s2P2.jld","s2",s2)
 
 solvers3 = [LD_TNEWTON, ARCqKsparse, ST_TRsparse, TRKsparse] # trunk, # Hprod bugs, needs matrix
 n_max = 10000
 s3, P3 = compare_solvers(solvers3, ampl_prob_dir, ampl_probs, n_min, n_max, title = "First order: #f + #g ")
-save("s3P3.jld","s3",s3)
+#save("s3P3.jld","s3",s3)
