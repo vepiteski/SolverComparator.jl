@@ -12,6 +12,7 @@ notifications:
 addons:
   apt_packages:
     - gfortran
+    - libgsl0-dev
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install gcc; fi
