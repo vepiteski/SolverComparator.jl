@@ -19,6 +19,7 @@ function compare_solver_options(solver :: Function, options, probs, n_min, n_max
                                  :max_eval => 20000)
   stats = Dict{Symbol, Array{Int,2}}()
   for option in options
+      @printf("\n\n\n running %s\n\n", string(option))
       stats[Symbol(option)] = solve_problems(solver, probs; merge(bmark_args, option)...)
   end
   profiles = profile_solvers(stats, title=string(solver))
