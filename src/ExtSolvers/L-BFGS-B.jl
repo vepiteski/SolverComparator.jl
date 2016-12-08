@@ -6,7 +6,7 @@ function LbfgsB(nlp :: AbstractNLPModel;
                 max_fg :: Int=0,
                 MaxIters :: Int = 50000,
                 verbose :: Bool=false,
-                m :: Int=5)
+                m :: Int=5,kwargs...)
     n = nlp.meta.nvar
     x₀ = copy(nlp.meta.x0)
 
