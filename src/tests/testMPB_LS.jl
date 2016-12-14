@@ -13,8 +13,8 @@ using NLPModels
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
 
+n=100
 
-n=10
 probs = filter(name -> name != :OptimizationProblems 
                    && name != :sbrybnd
                    && name != :penalty2
@@ -33,19 +33,34 @@ using LSDescentMethods
 using LineSearch
 #solver = Newlbfgs
 #solver = steepest
-#solver = Newton
+#solver = NewtonLDLt
+#solver = CG_FR
+solver = CG_PR
+#solver = CG_HZ
+#solver = CG_HS
 #(x, f, ∇fNorm, iter, optimal, tired, status)=solver(tst_prob)
 
 include("../compare_solvers.jl")
 
-solvers = [steepest,Newlbfgs,Newton, CG_PR]
+#using ARCTR
+#using HSL
 
-labels = ["steepestSimple0.2-0.6", "lbfgsSimple","Newton","CG"]
+solvers = [CG_FR,CG_PR,CG_HS,CG_HZ,Newlbfgs]
+labels = ["Fletcher-Reeves","Polak-Ribiere","Hestenes-Stiefel","Hager-Zhang","NewLbfgs"]
+options = [Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
+           Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.45, :τ₁=>0.56) 
+           Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
+           Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
+           Dict{Symbol,Any}() ]
 
-options = [Dict{Symbol,Any}(:τ₀=>0.2, :τ₁=>0.6) 
-           Dict{Symbol,Any}() 
-           Dict{Symbol,Any}() 
-           Dict{Symbol,Any}(:linesearch=>TR_Sec_ls, :τ₀=>0.4, :τ₁=>0.6)  ] # The basic greedy line search
+#solvers = [NewtonMA57, ARCMA57_abs, TRMA57_abs]
+#labels = ["NewtonMA57","ARCMA57_abs", "TRMA57_abs"]
+
+#options = [Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.3, :τ₁=> 0.6) 
+#           Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
+#           Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.45, :τ₁=>0.56) 
+#           Dict{Symbol,Any}()  ] # The basic greedy line search
+
 
 s1, P1 = compare_solvers_with_options(solvers, options, labels, mpb_probs, n_min, n_max)
 
