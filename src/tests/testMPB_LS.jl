@@ -7,13 +7,13 @@ using NLPModels
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
-#using Lbfgsb
-#include("../ExtSolvers/L-BFGS-B.jl")
+using Lbfgsb
+include("../ExtSolvers/L-BFGS-B.jl")
 
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
 
-n=100
+n=2000
 
 probs = filter(name -> name != :OptimizationProblems 
                    && name != :sbrybnd
@@ -45,16 +45,29 @@ include("../compare_solvers.jl")
 #using ARCTR
 #using HSL
 
-solvers = [CG_FR,CG_PR,CG_HS,CG_HZ,Newlbfgs]
-labels = ["Fletcher-Reeves","Polak-Ribiere","Hestenes-Stiefel","Hager-Zhang","NewLbfgs"]
-options = [Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
-           Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.45, :τ₁=>0.56) 
-           Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
-           Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
-           Dict{Symbol,Any}() ]
+solvers = [CG_PR,CG_PR,CG_HZ,CG_HZ,LbfgsB,Newlbfgs]
+#solvers = [CG_FR,CG_PR,CG_HS,CG_HZ,LbfgsB]
+labels = ["PR","PR .1 .9","HZ basicLS .1 .9","HZ basicLS","LbfgsB","Newlbfgs"]
+#labels = ["Fletcher-Reeves","Polak-Ribiere","Hestenes-Stiefel","Hager-Zhang","NewLbfgs"]
+#options = [Dict{Symbol,Any}(:τ₀=>0.001, :τ₁=> 0.02, :verbose=>false, :verboseLS=>false) 
+#           Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.001, :τ₁=>0.02, :verbose=>false, :verboseLS=>false) 
+#           Dict{Symbol,Any}(:linesearch => TR_Sec_ls,:τ₀=>0.3, :τ₁=> 0.6, :verbose=>false, :verboseLS=>false) 
+#           Dict{Symbol,Any}(:linesearch => TR_SecA_ls,:τ₀=>0.001, :τ₁=> 0.02, :verbose=>false, :verboseLS=>false) 
+#           Dict{Symbol,Any}( :verbose=>false, :verboseLS=>false) ]
 
 #solvers = [NewtonMA57, ARCMA57_abs, TRMA57_abs]
 #labels = ["NewtonMA57","ARCMA57_abs", "TRMA57_abs"]
+
+options = [Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.001, :τ₁=>0.02, :verbose=>false, :verboseLS=>false) 
+           Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.1, :τ₁=>0.9, :verbose=>false, :verboseLS=>false) 
+           Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :verbose=>false, :τ₀=>0.1, :τ₁=>0.9, :verboseLS=>false)
+           Dict{Symbol,Any}(:verbose=>false, :τ₀=>0.1, :τ₁=>0.9, :verbose=>false, :verboseLS=>false)
+           Dict{Symbol,Any}(:verbose=>false)
+           Dict{Symbol,Any}(:verbose=>false)]  # :scaling=>true) 
+
+
+
+#           Dict{Symbol,Any}() ]
 
 #options = [Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.3, :τ₁=> 0.6) 
 #           Dict{Symbol,Any}(:τ₀=>0.3, :τ₁=> 0.6) 
