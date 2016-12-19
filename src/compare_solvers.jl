@@ -84,10 +84,12 @@ end
 
 # Benchmark one solver with different options on a set of problems
 function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n_max; printskip :: Bool = false, kwargs...)
-    bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0) 
+    bmark_args = Dict{Symbol, Any}(:skipif => model -> (!unconstrained(model)) 
                                    || (model.meta.nvar < n_min)
                                    || (model.meta.nvar > n_max), 
                                    :max_eval => 20000)
+    skip = haskey(bmark_args, :skipif) ? pop!(bmark_args, :skipif) : x -> false
+    
     stats = Dict{Symbol, Array{Int,2}}()
 
     nprobs = length(probs)
@@ -98,7 +100,7 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
     
     k = 0
     for problem in probs
-        try
+        if !skip(problem)
             @printf("\n\n\n solving  %-15s  dimension: %8d \n\n", problem.meta.name, problem.meta.nvar)
             k += 1
             for (solver,option,label) in zip(solvers,options,labels)
@@ -106,10 +108,8 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
                 reset!(problem)
                 stats[Symbol(label)][k,:] = [f, g, h]
             end
-        catch e
-            isa(e, SkipException) || rethrow(e)
-            k = k - 1
-            printskip && @printf("%-15s  %8d   ncons = %-8d  %13s   skipped\n",problem.meta.name, problem.meta.nvar, problem.meta.ncon, unconstrained(problem.meta) ? "unconstrained" : "constrained")
+        elseif  printskip 
+            @printf("%-15s  %8d   ncons = %-8d  %13s   skipped\n",problem.meta.name, problem.meta.nvar, problem.meta.ncon, unconstrained(problem.meta) ? "unconstrained" : "constrained")
         end
         finalize(problem)
     end
