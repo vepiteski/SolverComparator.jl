@@ -40,7 +40,7 @@ include("../compare_solvers.jl")
 using HSL
 
 solvers = [solver,solver,solver,solver,Newlbfgs]
-labels = ["AW 0.001 0.02", "TR_Sec_ls 0.001 0.02", "AW 0.1 0.9", "TR_Sec_ls 0.1 0.9", "lbfgs"] 
+labels = ["AW 0.001 0.02", "TR_Sec 0.001 0.02", "TR_Sec 0.1 0.9", "TR_SecA 0.001 0.02", "lbfgs"] 
 options = [Dict{Symbol,Any}(:τ₀=>0.001, :τ₁=> 0.02, :verbose=>false, :verboseLS=>false) 
            Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.001, :τ₁=>0.02, :verbose=>false, :verboseLS=>false) 
            Dict{Symbol,Any}(:linesearch => TR_Sec_ls,:τ₀=>0.1, :τ₁=> 0.9, :verbose=>false, :verboseLS=>false) 
