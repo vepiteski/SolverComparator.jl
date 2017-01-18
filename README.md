@@ -8,6 +8,7 @@ For now, only unconstrained optimization is considered. Supported solvers are va
 - Knitro (untested)
 - Optimize (trunk and lbfgs)
 - ARCTR (20 variants, 4 more using the MA97 HSL package available)
+- LSDescentMethods (various conjugate gradients, modified Newton
 
 src/ExtSolvers contains wrappers to solvers from
 - Ipopt
