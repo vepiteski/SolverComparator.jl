@@ -13,7 +13,7 @@ include("../ExtSolvers/L-BFGS-B.jl")
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
 
-n=20
+n=2000
 
 probs = filter(name -> name != :OptimizationProblems 
                    && name != :sbrybnd

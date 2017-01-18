@@ -11,7 +11,7 @@ using NLPModels
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
 
-n=10
+n=100
 
 probs = filter(name -> name != :OptimizationProblems 
                    && name != :sbrybnd
@@ -20,7 +20,9 @@ probs = filter(name -> name != :OptimizationProblems
 
 
 mpb_probs = (MathProgNLPModel(eval(p)(n),  name=string(p) )   for p in probs)
-tst_prob = MathProgNLPModel(eval(:woods)(n),  name=string(:curly) );
+sprob = :genrose
+tst_prob = MathProgNLPModel(eval(sprob)(n),  name=string(sprob) );
+
 
 
 using LSDescentMethods
@@ -29,7 +31,7 @@ using LineSearch
 #solver = steepest
 #solver = NewtonLDLt
 #solver = CG_FR
-solver = CG_PR
+solver = CG_HZ
 #solver = CG_HZ
 #solver = CG_HS
-(x, f, ∇fNorm, iter, optimal, tired, status)=solver(tst_prob,linesearch=TR_Sec_ls,verboseLS=false, τ₀=0.001, τ₁=0.02, scaling=false)
+(x, f, ∇fNorm, iter, optimal, tired, status)=solver(tst_prob,linesearch=TR_Sec_ls,verboseLS=false, τ₀=0.001, τ₁=0.02, scaling=true, atol=1e-6, rtol=0.0)

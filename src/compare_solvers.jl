@@ -1,5 +1,4 @@
 # benchmark solvers on a set of problems
-
 function compare_solvers(solvers,probs,n_min,n_max;title:: String = " ", kwargs...)
   bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0) 
                                                   || (model.meta.nvar < n_min)
@@ -10,6 +9,7 @@ function compare_solvers(solvers,probs,n_min,n_max;title:: String = " ", kwargs.
                                       bmark_args=bmark_args, profile_args=profile_args)
   return stats, profiles
 end
+
 
 # Benchmark one solver with different options on a set of problems
 function compare_solver_options(solver :: Function, options, probs, n_min, n_max; kwargs...)
@@ -26,7 +26,12 @@ function compare_solver_options(solver :: Function, options, probs, n_min, n_max
   return stats, profiles
 end
  
-# Benchmark one solver with different options on a set of problems
+
+#
+# Regroup results solver by solver
+#
+
+# Benchmark solvers with different options on a set of problems
 function compare_solvers_with_options(solvers, options, labels, probs, n_min, n_max; kwargs...)
   bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0) 
                                                   || (model.meta.nvar < n_min)
@@ -41,15 +46,15 @@ function compare_solvers_with_options(solvers, options, labels, probs, n_min, n_
   return stats, profiles
 end
 
-
-
-
-
 type SkipException <: Exception
 end
 
+#
+# Version 2 regroup results problem by problem
+#
 
 function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: String; kwargs...)
+# Like solve_problem, but with label of method
   args = Dict(kwargs)
   skip = haskey(args, :skipif) ? pop!(args, :skipif) : x -> false
   skip(nlp) && throw(SkipException())
@@ -59,6 +64,7 @@ function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: St
   f = 0.0
   gNorm = 0.0
   status = "fail"
+  iter = 0
   try
     (x, f, gNorm, iter, optimal, tired, status) = solver(nlp; args...)
   catch e
@@ -73,22 +79,22 @@ function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: St
   #   f /= nlp.scale_obj_factor
   #   gNorm /= nlp.scale_obj_factor
   # end
-  @printf("%-25s  %9.2e  %7.1e  %5d  %5d  %6d  %s\n",
+  @printf("%-25s  %9.2e  %7.1e  %5d  %5d  %6d  %s  %6d\n",
           label, f, gNorm,
           nlp.counters.neval_obj, nlp.counters.neval_grad,
-          nlp.counters.neval_hprod, status)
+          nlp.counters.neval_hprod, status, iter)
   return optimal ? (nlp.counters.neval_obj, nlp.counters.neval_grad, nlp.counters.neval_hprod) : (-nlp.counters.neval_obj, -nlp.counters.neval_grad, -nlp.counters.neval_hprod)
 end
 
 
 
-# Benchmark one solver with different options on a set of problems
+# Benchmark solvers with different options on a set of problems
 function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n_max; printskip :: Bool = false, kwargs...)
     bmark_args = Dict{Symbol, Any}(:skipif => model -> (!unconstrained(model)) 
                                    || (model.meta.nvar < n_min)
                                    || (model.meta.nvar > n_max), 
-                                   :max_eval => 20000)
-    skip = haskey(bmark_args, :skipif) ? pop!(bmark_args, :skipif) : x -> false
+                                   :max_eval => 40000)
+    skip = model -> (!unconstrained(model)) || (model.meta.nvar < n_min) || (model.meta.nvar > n_max)
     
     stats = Dict{Symbol, Array{Int,2}}()
 

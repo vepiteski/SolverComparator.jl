@@ -2,6 +2,7 @@ using Optimize
 using SolverComparator
 using OptimizationProblems
 using NLPModels
+using CUTEst
 
 
 # Other packages available
@@ -12,22 +13,18 @@ include("../ExtSolvers/L-BFGS-B.jl")
 
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
+n=10000
+probs = open(readlines,"CUTEstUnc.list")
+Nprobs = length(probs)
 
-n=100
+lprobs = (CUTEstModel(p)  for p in probs)
 
-probs = filter(name -> name != :OptimizationProblems 
-                   && name != :sbrybnd
-                   && name != :penalty2
-                   && name != :penalty3, names(OptimizationProblems))
-
-
-mpb_probs = (MathProgNLPModel(eval(p)(n),  name=string(p) )   for p in probs)
-sprob = :morebv
-tst_prob = MathProgNLPModel(eval(sprob)(n),  name=string(sprob) );
+sprob = "MOREBV"
+#tst_prob = CUTEstModel(sprob);
 
 
 
-n_min = 0  # not used, OptimizationProblems may be adjusted
+n_min = 50  # not used, OptimizationProblems may be adjusted
 n_max = n
 
 using LSDescentMethods
@@ -47,9 +44,14 @@ options = [Dict{Symbol,Any}(:τ₀=>0.001, :τ₁=>0.02, :verbose=>false, :verbo
            Dict{Symbol,Any}(:linesearch => TR_Sec_ls,:τ₀=>0.1, :τ₁=> 0.9, :verbose=>false, :verboseLS=>false, :atol=> 1.0e-6, :rtol => 0.0) 
            Dict{Symbol,Any}(:linesearch => TR_SecA_ls,:τ₀=>0.001, :τ₁=> 0.02, :verbose=>false, :verboseLS=>false, :atol=> 1.0e-6, :rtol => 0.0) 
            Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :verbose=>false, :verboseLS=>false, :atol=> 1.0e-6, :rtol => 0.0) 
-           Dict{Symbol,Any}(:atol=> 1.0e-6, :rtol => 0.0)]
+           Dict{Symbol,Any}( :verbose=>false, :atol=> 1.0e-6, :rtol => 0.0)]
 
 #s1, P1 = compare_solvers_with_options2(solvers, options, labels, mpb_probs, n_min, n_max)
 
-#s1, P1 = compare_solvers_with_options2(solvers, options, labels, mpb_probs, n_min, n_max)
-s1, P1 = compare_solvers_with_options2(solvers, options, labels, [tst_prob], n_min, n_max)
+#s1, P1 = compare_solvers_with_options(solvers, options, labels, lprobs, n_min, n_max)
+s1, P1 = compare_solvers_with_options2(solvers, options, labels, lprobs, n_min, n_max)
+# Clean up the directory after the tests
+lib_so_files = filter(x -> contains(x,".so"),readdir())
+for str in lib_so_files run(`rm $str `) end
+run(`rm AUTOMAT.d`)
+run(`rm OUTSDIF.d`)
