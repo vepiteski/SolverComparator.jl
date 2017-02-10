@@ -65,4 +65,4 @@ end
 #    for str in lib_so_files run(`rm $str `) end
 #    run(`rm AUTOMAT.d`)
 #    run(`rm OUTSDIF.d`)
-end
+#end
