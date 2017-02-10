@@ -2,7 +2,7 @@ function Ipopt_NMPB(nlp :: AbstractNLPModel;
                         atol :: Float64 = 1e-8,
                         rtol :: Float64 = 1.0e-6,
                         itmax :: Int=5000, 
-                        max_f :: Int=5000,
+                        max_eval :: Int=5000,
                         max_calls :: Int = 40000,
                         verbose :: Bool = true
                         )                

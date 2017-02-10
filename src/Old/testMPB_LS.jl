@@ -13,12 +13,13 @@ include("../ExtSolvers/L-BFGS-B.jl")
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
 
-n=2000
+n=200
 
 probs = filter(name -> name != :OptimizationProblems 
                    && name != :sbrybnd
                    && name != :penalty2
-                   && name != :penalty3, names(OptimizationProblems))
+                   && name != :penalty3
+               , names(OptimizationProblems))
 
 
 mpb_probs = (MathProgNLPModel(eval(p)(n),  name=string(p) )   for p in probs)
@@ -55,11 +56,28 @@ using HSL
 #           Dict{Symbol,Any}(:linesearch => TR_SecA_ls,:τ₀=>0.001, :τ₁=> 0.02, :verbose=>false, :verboseLS=>false) 
 #           Dict{Symbol,Any}( :verbose=>false, :verboseLS=>false) ]
 
-solvers = [NewtonMA57, ARCMA57_abs, TRMA57_abs]
-labels = ["NewtonMA57","ARCMA57_abs", "TRMA57_abs"]
-options = [Dict{Symbol,Any}(:verbose=>false, :verboseLS=>false) 
-           Dict{Symbol,Any}(:verbose=>false) 
-           Dict{Symbol,Any}(:verbose=>false)  ] # The basic greedy line search
+#solvers = [NewtonMA57, Newlbfgs, ARCMA57_abs, TRMA57_abs, LbfgsB]
+#labels = ["NewtonMA57", "lbfgs", "ARCMA57_abs", "TRMA57_abs", "LbfgsB"]
+#solvers = [ NewtonMA57,   NewtonLDLt,   ARCMA57_abs,   TRMA57_abs,   ARCLDLt_abs]
+#labels =  ["NewtonMA57", "NewtonLDLt", "ARCMA57_abs", "TRMA57_abs", "ARCLDLt_abs"]
+#solvers = [ NewtonMA57,   NewtonSpectral,   ARCMA57_abs,   TRMA57_abs,   ARCSpectral_abs]
+#labels =  ["NewtonMA57", "NewtonSpectral", "ARCMA57_abs", "TRMA57_abs", "ARCSpectral_abs"]
+
+solvers = [NewtonSpectral, ARCSpectral,TRSpectral, ARCSpectral_abs, TRSpectral_abs]
+labels = ["NewtonSpectral", "ARCSpectral", "TRSpectral", "ARCSpectral_abs", "TRSpectral_abs"]
+
+options = [Dict{Symbol,Any}(:verbose=>false, :verboseLS=>false, :atol=> 1.0e-5, :rtol => 1.0e-10)
+           Dict{Symbol,Any}(:verbose=>false, :atol=> 1.0e-5, :rtol => 1.0e-10) 
+           Dict{Symbol,Any}(:verbose=>false, :atol=> 1.0e-5, :rtol => 1.0e-10) 
+           Dict{Symbol,Any}(:verbose=>false, :atol=> 1.0e-5, :rtol => 1.0e-10) 
+           Dict{Symbol,Any}(:verbose=>false, :atol=> 1.0e-5, :rtol => 1.0e-10)
+           ]
+
+#options = [Dict{Symbol,Any}(:verbose=>false, :verboseLS=>false) 
+#           Dict{Symbol,Any}(:verbose=>false, :verboseLS=>false) 
+#           Dict{Symbol,Any}(:verbose=>false) 
+#           Dict{Symbol,Any}(:verbose=>false)  
+#           Dict{Symbol,Any}(:verbose=>false) ] # The basic greedy line search
 
 #options = [Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.001, :τ₁=>0.02, :verbose=>false, :verboseLS=>false) 
 #           Dict{Symbol,Any}(:linesearch => TR_Sec_ls, :τ₀=>0.1, :τ₁=>0.9, :verbose=>false, :verboseLS=>false) 
@@ -78,6 +96,6 @@ options = [Dict{Symbol,Any}(:verbose=>false, :verboseLS=>false)
 #           Dict{Symbol,Any}()  ] # The basic greedy line search
 
 
-s1, P1 = compare_solvers_with_options2(solvers, options, labels, mpb_probs, n_min, n_max)
+s1, P1, t1, Pt1 = compare_solvers_with_options2(solvers, options, labels, mpb_probs, n_min, n_max)
 
 #s1, P1 = compare_solver_options(solver, options, mpb_probs, n_min, n_max)

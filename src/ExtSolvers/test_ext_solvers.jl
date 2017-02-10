@@ -9,7 +9,7 @@ using NLPModels
 # using Optimize
 
 # official julia packages:  NLopt and Ipopt
-include("../ExtSolvers/solvers.jl")
+include("solvers.jl")
 
 # Other packages available
 
@@ -28,6 +28,9 @@ for s in Ext_solvers
     model = MathProgNLPModel(genrose(2))
     (x, f, gNorm, iterB, optimal, tired, status) = eval(s)(model)
     @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
+    
+    @test f ≈ 1.0
+
     finalize(model)
 end
 
@@ -54,6 +57,8 @@ end
         @printf(" executing solver %s on CUTEst rosenbr\n",string(s))
         (x, f, gNorm, iterB, optimal, tired, status) = eval(s)(model)
         @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
+        @test f < 1e-10
+
         finalize(model)
     end
     lib_so_files = [f for f in filter(x -> contains(x,".so"),readdir())]

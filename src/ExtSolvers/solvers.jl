@@ -14,3 +14,6 @@ push!(IpoptSolvers,Ipopt_LBFGSMPB)
 
 include("Ipopt_NMPB.jl")
 push!(IpoptSolvers,Ipopt_NMPB)
+
+# trunk   with signature standardized
+include("trunk.jl")
