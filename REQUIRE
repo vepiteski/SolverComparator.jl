@@ -5,5 +5,5 @@ NLopt
 Ipopt
 MathProgBase
 #Krylov
-#Optimize
+Optimize
 #AmplNLReader
