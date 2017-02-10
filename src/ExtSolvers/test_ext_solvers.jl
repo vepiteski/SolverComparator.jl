@@ -50,19 +50,19 @@ end
 #    finalize(model)
 #end
 
-@static if is_unix()
-    using CUTEst
-    for s in Ext_solvers
-        model = CUTEstModel("ROSENBR")
-        @printf(" executing solver %s on CUTEst rosenbr\n",string(s))
-        (x, f, gNorm, iterB, optimal, tired, status) = eval(s)(model)
-        @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
-        @test f < 1e-10
-
-        finalize(model)
-    end
-    lib_so_files = [f for f in filter(x -> contains(x,".so"),readdir())]
-    for str in lib_so_files run(`rm $str `) end
-    run(`rm AUTOMAT.d`)
-    run(`rm OUTSDIF.d`)
+#@static if is_unix()
+#    using CUTEst
+#    for s in Ext_solvers
+#        model = CUTEstModel("ROSENBR")
+#        @printf(" executing solver %s on CUTEst rosenbr\n",string(s))
+#        (x, f, gNorm, iterB, optimal, tired, status) = eval(s)(model)
+#        @printf("x0 = ");show(model.meta.x0);@printf("x* = ");show(x);@printf("   f* =  %d",f);@printf("\n")
+#        @test f < 1e-10
+#
+#        finalize(model)
+#    end
+#    lib_so_files = [f for f in filter(x -> contains(x,".so"),readdir())]
+#    for str in lib_so_files run(`rm $str `) end
+#    run(`rm AUTOMAT.d`)
+#    run(`rm OUTSDIF.d`)
 end
