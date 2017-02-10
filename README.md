@@ -16,6 +16,7 @@ src/ExtSolvers contains wrappers to solvers from
 - LbfgsB (not an official julia Pkg)
 - Knitro (not an open source solver)
 - Newtrunk  adjustment of trunk to use the infinity norm as stopping criterion
+- test_ext_solvers: tests the provided wrappers to external solvers on the rosenbrock test function
 
 src/compare_solvers.jl contains useful function to run batches of solvers on batches of problems. Both scripts run several solvers on a set of problems; each the set of solvers need not be distincts and a correspoonding set of options is required, one option list per solver. run several solvers on a set of problems; each the set of solvers need not be distincts and a corresponding set of options is required, one option list per solver. Both return two performance profiles, one using function evaluations and the other CPU time.
 - compare_solvers_with_options   The results are produced solver by solver.
@@ -28,7 +29,6 @@ src/Ampl_JuMP contains some problems used for testing, both modeled in JuMP and 
 - test script to validate that both models are equivalent
 
 src/tests contains several script helpful to compare solvers from any source. They should serve as examples.
-- test_ext_solvers: tests the provided wrappers to external solvers on the rosenbrock test function
 - CUTEstUnc.list: list of unconstrained models in CUTEst
 - testcompare: test the comparison tools.
 - testgeneric:  template to test several solvers on several models (MPB, CUTEst, Ampl)
