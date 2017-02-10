@@ -30,6 +30,8 @@ src/Ampl_JuMP contains some problems used for testing, both modeled in JuMP and 
 src/tests contains several script helpful to compare solvers from any source. They should serve as examples.
 - test_ext_solvers: tests the provided wrappers to external solvers on the rosenbrock test function
 - CUTEstUnc.list: list of unconstrained models in CUTEst
-- testAMPL: test many solvers on ampl models. The ampl models should be obtained elsewhere.
-- testCUTE test many solvers on the CUTEstUnc.list
-- testMPB test many solvers on models from OptimizationModels.
+- testcompare: test the comparison tools.
+- testgeneric:  template to test several solvers on several models (MPB, CUTEst, Ampl)
+- AmplProblems.jl: script to load the Ampl test problems
+- CUTEstProblems.jl: script to load the CUTEst test problems
+- MPBProblems.jl: script to load the MPB test problems
