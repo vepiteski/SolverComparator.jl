@@ -4,5 +4,6 @@ NLPModels
 NLopt
 Ipopt
 MathProgBase
+Krylov
 #Optimize
 #AmplNLReader
