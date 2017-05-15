@@ -18,7 +18,7 @@ include("../ExtSolvers/L-BFGS-B.jl")
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
 using Optimize
 
-n=1000
+n=500
 probs = filter(name -> name != :OptimizationProblems 
                    && name != :sbrybnd
                    && name != :penalty2
@@ -43,8 +43,8 @@ tst_prob = MathProgNLPModel(eval(sprob)(n),  name=string(sprob) );
 #labels  = ["ARCLDLt", "ARCLDLt_abs", "ARCSpectral", "ARCSpectral_abs", "ARCMA57", "ARCMA57_abs"]#, "NewtonLDLt"]
 #solvers1 = [ARCMA57,   ARCMA57_abs,    LbfgsB] #, NewtonLDLt]
 #labels =  ["ARCMA57", "ARCMA57_abs",  "LbfgsB"]#, "NewtonLDLt"]
-solvers1 = [ARCMA57,   ARCMA57_abs ,  ST_TROp,   Newtrunk,   ARCqKOp] #, NewtonLDLt]
-labels =  ["ARCMA57", "ARCMA57_abs", "ST_TROp", "Newtrunk", "ARCqKOp"]#, "NewtonLDLt"]
+solvers1 = [ARCMA57,   ARCMA57_abs ,  ST_TROp,   Newtrunk,        ARCqKOp,   Newtrunk] #, NewtonLDLt]
+labels =  ["ARCMA57", "ARCMA57_abs", "ST_TROp", "Newtrunk mono", "ARCqKOp", "Newtrunk"]#, "NewtonLDLt"]
 #solvers1 = [ARCMA97,   ARCMA97_abs,    LbfgsB] #, NewtonLDLt]
 #labels =  ["ARCMA97", "ARCMA97_abs",  "LbfgsB"]#, "NewtonLDLt"]
 #solvers1 = [ARCMA57,   ARCMA57_abs,   TRMA57,   TRMA57_abs,   NewtonMA57,   Ipopt_NMPB]
@@ -60,6 +60,7 @@ include("../compare_solvers.jl")
 options = [Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
            Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
            Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
+           Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10, :monotone => true)
            Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10)
            Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10)
            Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10)

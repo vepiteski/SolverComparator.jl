@@ -25,7 +25,7 @@ include("trust-region.jl")
 function Newtrunk(nlp :: AbstractNLPModel;
                   atol :: Float64=1.0e-8, rtol :: Float64=1.0e-6,
                   max_eval :: Int=5000,
-                  itmax :: Int = 20000,
+                  max_iter :: Int = 20000,
                   bk_max :: Int=10,
                   monotone :: Bool=false,
                   nm_itmax :: Int=25,
@@ -64,7 +64,7 @@ function Newtrunk(nlp :: AbstractNLPModel;
     calls = [nlp.counters.neval_obj,  nlp.counters.neval_grad, nlp.counters.neval_hess, nlp.counters.neval_hprod]
         
     optimal = (norm_g0 < atol) | (isinf(f) & (f<0.0))
-    tired = (iter >= itmax) | (sum(calls) > max_eval)
+    tired = (iter >= max_iter) | (sum(calls) > max_eval)
     #optimal = ∇fNorm2 <= ϵ
     #tired = nlp.counters.neval_obj > max_f
     stalled = false
@@ -183,7 +183,7 @@ function Newtrunk(nlp :: AbstractNLPModel;
         calls = [nlp.counters.neval_obj,  nlp.counters.neval_grad, nlp.counters.neval_hess, nlp.counters.neval_hprod]
         
         optimal = (norm_g < atol)| (norm_g <( rtol * norm_g0)) | (isinf(f) & (f<0.0))
-        tired = (iter >= itmax) | (sum(calls) > max_eval)
+        tired = (iter >= max_iter) | (sum(calls) > max_eval)
         #optimal = ∇fNorm2 <= ϵ
         #tired = nlp.counters.neval_obj > max_f
     end

@@ -3,7 +3,7 @@ export LbfgsB
 function LbfgsB(nlp :: AbstractNLPModel;
                 atol :: Float64=1.0e-8, rtol :: Float64=1.0e-6,
                 max_eval :: Int=5000,
-                itmax :: Int = 20000,
+                max_iter :: Int = 20000,
                 verbose :: Bool=false,
                 m :: Int=5,kwargs...)
     n = nlp.meta.nvar
