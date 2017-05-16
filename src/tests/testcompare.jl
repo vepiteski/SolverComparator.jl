@@ -50,9 +50,9 @@ solvers = [ ST_TROp,   Newtrunk,   ARCqKOp]
 labels = []
 for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
-options = [Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
-           Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
-           Dict{Symbol,Any}(:verbose=>false, :itmax => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
+options = [Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
+           Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
+           Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> 1.0e-5, :rtol => 1.0e-10) 
            ]
 
 include("../compare_solvers.jl")

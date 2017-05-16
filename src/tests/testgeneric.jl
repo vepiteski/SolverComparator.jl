@@ -7,22 +7,22 @@ using NLPModels
 # select problem collection
 
 n_min = 20
-n_max = 2000
+n_max = 200
 
 # For the moment, impossible to mix collections
 # Uncomment only one of mpb, ampl or cutest
 
 # Math Prog Base collection
-#include("MPBProblems.jl")
-#test_probs = mpb_probs
+include("MPBProblems.jl")
+test_probs = mpb_probs
 
 # Ampl collection
 #include("AmplProblems.jl")
 #test_probs = ampl_probs
 
 # CUTEst collection
-include("CUTEstProblems.jl")
-test_probs = cute_probs
+#include("CUTEstProblems.jl")
+#test_probs = cute_probs
 
 
 # Select solvers
