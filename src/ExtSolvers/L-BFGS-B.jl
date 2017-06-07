@@ -28,12 +28,12 @@ function LbfgsB(nlp :: AbstractNLPModel;
     f, x, iterB, callB, status  = lbfgsb(_ogFunc!,
                                          x₀, 
                                          m=m,
-                                         maxiter = min(itmax,max_eval),
+                                         maxiter = min(max_iter,max_eval),
                                          iprint = verblevel,
                                          factr = 0.0,
                                          pgtol = tolI)
 
-    tired = ! ((iterB < itmax) | (callB < max_eval))
+    tired = ! ((iterB < max_iter) & (callB < max_eval))
 
     grad!(nlp,x,g)
     gNorm = norm(g,Inf)

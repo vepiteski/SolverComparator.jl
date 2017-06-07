@@ -50,7 +50,7 @@ function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: St
             (x, f, gNorm, iter, optimal, tired, status) = solver(nlp; args...)
         end
     end
-    @printf("%-15s  %9.2e  %7.1e  %5d  %5d  %6d  %6d  %6d    %10.5f   %s\n",
+    @printf("%-25s  %9.2e  %7.1e  %5d  %5d  %6d  %6d  %6d    %10.5f   %s\n",
             label, f, gNorm,
             nlp.counters.neval_obj, nlp.counters.neval_grad,
             nlp.counters.neval_hprod, nlp.counters.neval_hess, iter, elapsed_time, status)
@@ -64,7 +64,7 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
     bmark_args = Dict{Symbol, Any}(:skipif => model -> (!unconstrained(model)) 
                                    || (model.meta.nvar < n_min)
                                    || (model.meta.nvar > n_max), 
-                                   :max_eval => 40000)
+                                   :max_eval => 50000)
     skip = model -> (!unconstrained(model)) || (model.meta.nvar < n_min) || (model.meta.nvar > n_max)
     
     args = Dict(kwargs)
@@ -84,7 +84,7 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
         if !skip(problem)
             @printf("\nsolving  %-15s  dimension: %8d \n\n", problem.meta.name, problem.meta.nvar)
             k += 1
-            @printf("solver              f       ||∇f||      #f     #g      #Hv     #H    #iter       time    status\n\n")
+            @printf("solver                        f       ||∇f||      #f     #g      #Hv     #H    #iter       time    status\n\n")
             for (solver,option,label) in zip(solvers,options,labels)
                 (f, g, hv, h, t) =  solve_problem2(solver, problem, label; merge(bmark_args, option)...)
                 reset!(problem)
@@ -103,7 +103,7 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
     end
 
     args = Dict(kwargs)
-    args[:title] = " f + g evaluations"
+    args[:title] = " f + g + H*v + H evaluations"
     profiles = profile_solvers(stats; args...)
 
     args[:title] = " CPU time"
