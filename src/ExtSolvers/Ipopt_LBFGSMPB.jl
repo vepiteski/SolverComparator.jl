@@ -1,9 +1,9 @@
 function Ipopt_LBFGSMPB(nlp :: AbstractNLPModel;
                         atol :: Float64 = 1e-8,
                         rtol :: Float64 = 1.0e-6,
-                        itmax :: Int=5000, 
+                        max_iter :: Int=5000, 
                         max_f :: Int=5000,
-                        max_calls :: Int = 40000,
+                        max_eval :: Int = 40000,
                         verbose :: Bool = true
                         )                
     
@@ -11,7 +11,7 @@ function Ipopt_LBFGSMPB(nlp :: AbstractNLPModel;
                           IpoptSolver(hessian_approximation="limited-memory",
                                       limited_memory_max_history=5,
                                       print_level = 0,
-                                      max_iter = itmax,
+                                      max_iter = max_iter,
                                       tol = rtol)
                           );
     

@@ -1,7 +1,7 @@
 function Ipopt_NMPB(nlp :: AbstractNLPModel;
                         atol :: Float64 = 1e-8,
                         rtol :: Float64 = 1.0e-6,
-                        itmax :: Int=5000, 
+                        max_iter :: Int=5000, 
                         max_eval :: Int=5000,
                         max_calls :: Int = 40000,
                         verbose :: Bool = true
@@ -9,7 +9,7 @@ function Ipopt_NMPB(nlp :: AbstractNLPModel;
     
     IpoptModel = NLPtoMPB(nlp, 
                           IpoptSolver(print_level = 0,
-                                      max_iter = itmax,
+                                      max_iter = max_iter,
                                       tol = rtol)
                           );
     
