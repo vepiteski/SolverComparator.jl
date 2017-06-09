@@ -92,4 +92,8 @@ include("../compare_solvers.jl")
 s1, P1, t1, Pt1 = compare_solvers_with_options2(solvers, options, labels, test_probs, n_min, n_max, printskip = false)
 
 
+<<<<<<< HEAD
 TestCUTEst && include("CleanCUTE.jl")
+=======
+include("CleanCUTE.jl")
+>>>>>>> 8d758887468301cf9d83f1f4bb987fc9d83e2ddd
