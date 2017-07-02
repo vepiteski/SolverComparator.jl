@@ -5,9 +5,9 @@
 
 # Benchmark solvers with different options on a set of problems
 function compare_solvers_with_options(solvers, options, labels, probs, n_min, n_max; kwargs...)
-  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0) 
+  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0)
                                                   || (model.meta.nvar < n_min)
-                                                  || (model.meta.nvar > n_max), 
+                                                  || (model.meta.nvar > n_max),
                                  :max_eval => 20000)
   stats = Dict{Symbol, Array{Int,2}}()
   for (solver,option,label) in zip(solvers,options,labels)
@@ -30,7 +30,7 @@ function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: St
     args = Dict(kwargs)
     skip = haskey(args, :skipif) ? pop!(args, :skipif) : x -> false
     skip(nlp) && throw(SkipException())
-    
+
     # Julia nonsense
     optimal = false
     f = 0.0
@@ -38,22 +38,33 @@ function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: St
     status = "fail"
     iter = 0
     elapsed_time = 0.0
+    h_f = 0
+    h_g = 0
+    h_h = 0
     try
         tic()
-        (x, f, gNorm, iter, optimal, tired, status) = solver(nlp; args...)
+        (x, f, gNorm, iter, optimal, tired, status, h_f, h_g, h_h) = solver(nlp; args...)
+        # print_with_color(:yellow,"après try \n")
+        # println("h_f=",h_f," h_g=",h_g," h_h=",h_h)
         elapsed_time = toq()
     catch e
         #  println(e)
         try status = e.msg
-        catch 
+        catch
             println("Untraced exception")
-            (x, f, gNorm, iter, optimal, tired, status) = solver(nlp; args...)
+            (x, f, gNorm, iter, optimal, tired, status, h_f, h_g, h_h) = solver(nlp; args...)
+            # print_with_color(:yellow,"après catch \n")
+            # println("h_f=",h_f," h_g=",h_g," h_h=",h_h)
         end
     end
-    @printf("%-25s  %9.2e  %7.1e  %5d  %5d  %6d  %6d  %6d    %10.5f   %s\n",
-            label, f, gNorm,
-            nlp.counters.neval_obj, nlp.counters.neval_grad,
-            nlp.counters.neval_hprod, nlp.counters.neval_hess, iter, elapsed_time, status)
+    # print_with_color(:yellow,"après try/catch \n")
+    # println("iter=",iter," f=",f," gNorm=",gNorm)
+    # println("h_f=",h_f," h_g=",h_g," h_h=",h_h)
+    @printf("%-35s  %9.2e  %7.1e  %5d  %5d  %6d  %6d  %6d    %10.5f   %s",
+                label, f, gNorm,
+                nlp.counters.neval_obj, nlp.counters.neval_grad,
+    nlp.counters.neval_hprod, nlp.counters.neval_hess, iter, elapsed_time, status)
+    println(" $h_f $h_g $h_h")
     return optimal ? (nlp.counters.neval_obj, nlp.counters.neval_grad, nlp.counters.neval_hprod, nlp.counters.neval_hess,  elapsed_time) : (-nlp.counters.neval_obj, -nlp.counters.neval_grad, -nlp.counters.neval_hprod, -nlp.counters.neval_hess, -max(elapsed_time,Inf))
 end
 
@@ -61,12 +72,12 @@ end
 
 # Benchmark solvers with different options on a set of problems
 function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n_max; printskip :: Bool = false, kwargs...)
-    bmark_args = Dict{Symbol, Any}(:skipif => model -> (!unconstrained(model)) 
+    bmark_args = Dict{Symbol, Any}(:skipif => model -> (!unconstrained(model))
                                    || (model.meta.nvar < n_min)
-                                   || (model.meta.nvar > n_max), 
+                                   || (model.meta.nvar > n_max),
                                    :max_eval => 50000)
     skip = model -> (!unconstrained(model)) || (model.meta.nvar < n_min) || (model.meta.nvar > n_max)
-    
+
     args = Dict(kwargs)
 
     stats = Dict{Symbol, Array{Int,2}}()
@@ -78,20 +89,20 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
         stats[Symbol(label)] = -ones(nprobs, 4)
         time[Symbol(label)] = -ones(nprobs)
     end
-    
+
     k = 0
     for problem in probs
         if !skip(problem)
             @printf("\nsolving  %-15s  dimension: %8d \n\n", problem.meta.name, problem.meta.nvar)
             k += 1
-            @printf("solver                        f       ||∇f||      #f     #g      #Hv     #H    #iter       time    status\n\n")
+            @printf("solver                                  f       ||∇f||      #f     #g      #Hv     #H    #iter       time    status\n\n")
             for (solver,option,label) in zip(solvers,options,labels)
                 (f, g, hv, h, t) =  solve_problem2(solver, problem, label; merge(bmark_args, option)...)
                 reset!(problem)
                 stats[Symbol(label)][k,:] = [f, g, hv, h]
                 time[Symbol(label)][k] = t
             end
-        elseif  printskip 
+        elseif  printskip
             @printf("%-15s  %8d   ncons = %-8d  %13s   skipped\n",problem.meta.name, problem.meta.nvar, problem.meta.ncon, unconstrained(problem.meta) ? "unconstrained" : "constrained")
         end
         finalize(problem)
@@ -145,9 +156,9 @@ end
 
 # benchmark solvers on a set of problems
 function compare_solvers(solvers,probs,n_min,n_max;title:: String = " ", kwargs...)
-  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0) 
+  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0)
                                                   || (model.meta.nvar < n_min)
-                                                  || (model.meta.nvar > n_max), 
+                                                  || (model.meta.nvar > n_max),
                                  :max_f => 20000)
   profile_args = Dict{Symbol, Any}(:title => title)
   stats, profiles = bmark_and_profile(solvers, probs,
@@ -158,9 +169,9 @@ end
 
 # Benchmark one solver with different options on a set of problems
 function compare_solver_options(solver :: Function, options, probs, n_min, n_max; kwargs...)
-  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0) 
+  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0)
                                                   || (model.meta.nvar < n_min)
-                                                  || (model.meta.nvar > n_max), 
+                                                  || (model.meta.nvar > n_max),
                                  :max_eval => 20000)
   stats = Dict{Symbol, Array{Int,2}}()
   for option in options
@@ -170,4 +181,3 @@ function compare_solver_options(solver :: Function, options, probs, n_min, n_max
   profiles = profile_solvers(stats, title=string(solver))
   return stats, profiles
 end
- 
