@@ -9,7 +9,7 @@ pyplot()
 # select problem collection
 
 n_min = 20
-n_max = 50
+n_max = 50000
 
 TestCUTEst = false
 
@@ -17,35 +17,32 @@ TestCUTEst = false
 # Uncomment only one of mpb, ampl or cutest
 
 # Math Prog Base collection
-include("MPBProblems.jl")
-test_probs = mpb_probs
+#include("MPBProblems.jl")
+#test_probs = mpb_probs
 
 # Ampl collection
 #include("AmplProblems.jl")
 #test_probs = ampl_probs
 
 # CUTEst collection
-#include("CUTEstProblems.jl")
-#test_probs = cute_probs
-#TestCUTEst = true
+include("CUTEstProblems.jl")
+test_probs = cute_probs
+TestCUTEst = true
 
 
 # Select solvers
-#using LineSearch
-using Stopping
-#using LSDescentMethods
 
 # official julia packages:  NLopt and Ipopt
-include("../ExtSolvers/solvers.jl")
+include("../../ExtSolvers/solvers.jl")
 
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
 using Lbfgsb
-include("../ExtSolvers/L-BFGS-B.jl")
+include("../../ExtSolvers/L-BFGS-B.jl")
 
 using ARCTR
-
+using LSDescentMethods
 
 
 stop_norm = ARCTR.stop_norm
@@ -54,8 +51,7 @@ rtol=1.0e-10
 
 #solvers = [TRMA57_absNew, TRMA57_abs, TRMA57Old, TRMA57New]
 #solvers = [TRKOpS, ARCqKOpS, ST_TROpS,LbfgsB]#, LbfgsB]
-#solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, Ipopt_NMPB]#, LbfgsB]
-solvers = [ST_TROpS, ARCqKOpS, LbfgsBS, LbfgsB]
+solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, Ipopt_NMPBS, NewtonS]#, LbfgsB]
 #solvers = [TRLDLt_absS, ARCLDLt_absS, ARCLDLtS, TRLDLtS]
 #solvers = [TRLDLt_abs, TRLDLtNew, TRLDLt_absNew]
 #solvers = [TRMA57_absNew, TRMA57_absNew]
@@ -64,16 +60,19 @@ for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
 using Stopping
 
-stop = TStopping(atol = atol, rtol = rtol, max_iter = 100000, max_eval = 100000, max_time = 1.0)
+stop = TStopping(atol = atol, rtol = rtol, max_iter = 100000, max_eval = 100000, max_time = 600.0)
 
 options = [Dict{Symbol,Any}(:verbose=>false, :s => stop)
            Dict{Symbol,Any}(:verbose=>false, :s => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :max_iter => 100000,  :max_eval => 100000, :atol=> atol, :rtol => rtol)#, :robust
+           Dict{Symbol,Any}(:verbose=>false, :s => stop)
+           Dict{Symbol,Any}(:verbose=>false, :s => stop)
+           Dict{Symbol,Any}(:verbose=>false, :s => stop)
+           Dict{Symbol,Any}(:verbose=>false, :s => stop, :Nwtdirection=>NwtdirectionMA57,
+                            :hessian_rep => hessian_sparse)
            ]
 
 
-include("../compare_solvers.jl")
+include("../../compare_solvers.jl")
 
 s1, P1, t1, Pt1 = compare_solvers_with_options2(solvers, options, labels, test_probs, n_min, n_max, printskip = false)
 

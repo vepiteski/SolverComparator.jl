@@ -4,6 +4,7 @@ module SolverComparator
 using JuMP
 using NLPModels
 using AmplNLReader
+using Stopping
 
 #using Optimize
 

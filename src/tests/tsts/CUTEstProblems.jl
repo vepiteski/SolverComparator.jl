@@ -1,6 +1,6 @@
 using CUTEst
 
-probs = open(readlines,"CUTEstUnc.list")
+probs = open(readlines,"../CUTEstUnc.list")
 probs = filter(
     x -> x != "MSQRTALS\n"  # very long to solve
     && x != "MSQRTBLS\n",   # very long to solve
