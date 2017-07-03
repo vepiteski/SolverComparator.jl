@@ -74,8 +74,7 @@ end
 function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n_max; printskip :: Bool = false, kwargs...)
     bmark_args = Dict{Symbol, Any}(:skipif => model -> (!unconstrained(model))
                                    || (model.meta.nvar < n_min)
-                                   || (model.meta.nvar > n_max),
-                                   :max_eval => 50000)
+                                   || (model.meta.nvar > n_max))
     skip = model -> (!unconstrained(model)) || (model.meta.nvar < n_min) || (model.meta.nvar > n_max)
 
     args = Dict(kwargs)
@@ -93,7 +92,14 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
     k = 0
     for problem in probs
         if !skip(problem)
-            @printf("\nsolving  %-15s  dimension: %8d \n\n", problem.meta.name, problem.meta.nvar)
+            x0 = problem.meta.x0
+            H = hess(problem,x0)
+            f = obj(problem,x0)
+            normg = norm(grad(problem,x0))
+            nnzH = nnz(H)
+            nvar = problem.meta.nvar
+
+            @printf("\nsolving  %-15s  dimension: %8d normg: %10.3e  nnzH:  %8d  Hdensity  %5f\n\n", problem.meta.name, nvar, normg, nnzH, float(2*nnzH)/float(nvar*(nvar+1)))
             k += 1
             @printf("solver                                  f       ||∇f||      #f     #g      #Hv     #H    #iter       time    status\n\n")
             for (solver,option,label) in zip(solvers,options,labels)
@@ -119,6 +125,7 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
 
     args[:title] = " CPU time"
     profiles_time = profile_solvers2(time; args...)
+    return stats, profiles, time, profiles_time
     return stats, profiles, time, profiles_time
 end
 
