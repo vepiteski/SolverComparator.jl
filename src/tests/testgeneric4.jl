@@ -2,6 +2,8 @@ using Optimize
 using SolverComparator
 using NLPModels
 
+using Plots
+pyplot()
 
 
 # select problem collection
@@ -24,6 +26,7 @@ test_probs = mpb_probs
 # include("CUTEstProblems.jl")
 # test_probs = cute_probs
 
+using Stopping
 
 # Select solvers
 

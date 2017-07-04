@@ -1,9 +1,16 @@
 using MathProgBase
 # Solvers are interfaced thru MathProgBase
 
+# LBFGSB -- one solver
+using Lbfgsb
+include("L-BFGS-B.jl")
+include("L-BFGS-BS.jl")
+
+
 # NLopt (7 gradient based solvers)
 using NLopt
 include("NLoptSolvers.jl")
+
 
 # Ipopt  --  2 solvers  (true hessian (uses :Hess) and limited memory approximation (needs only :Grad))
 IpoptSolvers = Function[]

@@ -55,20 +55,20 @@ rtol=1.0e-10
 #solvers = [TRMA57_absNew, TRMA57_abs, TRMA57Old, TRMA57New]
 #solvers = [TRKOpS, ARCqKOpS, ST_TROpS,LbfgsB]#, LbfgsB]
 #solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, Ipopt_NMPB]#, LbfgsB]
-solvers = [ST_TROpS, ARCqKOpS, LbfgsBS, LbfgsB]
+solvers = [ST_TROpS, ARCqKOpS, LbfgsBS, Ipopt_LBFGSMPBS]
 #solvers = [TRLDLt_absS, ARCLDLt_absS, ARCLDLtS, TRLDLtS]
 #solvers = [TRLDLt_abs, TRLDLtNew, TRLDLt_absNew]
 #solvers = [TRMA57_absNew, TRMA57_absNew]
 labels = []
 for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
-using Stopping
 
 stop = TStopping(atol = atol, rtol = rtol, max_iter = 100000, max_eval = 100000, max_time = 1.0)
 
 options = [Dict{Symbol,Any}(:verbose=>false, :s => stop)
            Dict{Symbol,Any}(:verbose=>false, :s => stop)
            Dict{Symbol,Any}(:verbose=>false, :stp => stop)
+           Dict{Symbol,Any}(:verbose=>false, :s => stop)
            Dict{Symbol,Any}(:verbose=>false, :max_iter => 100000,  :max_eval => 100000, :atol=> atol, :rtol => rtol)#, :robust
            ]
 

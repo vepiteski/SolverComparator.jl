@@ -2,6 +2,8 @@ using Optimize
 using SolverComparator
 using NLPModels
 
+using Plots
+pyplot()
 
 
 # select problem collection
@@ -24,11 +26,12 @@ test_probs = mpb_probs
 # include("CUTEstProblems.jl")
 # test_probs = cute_probs
 
+using Stopping
 
 # Select solvers
 
 # official julia packages:  NLopt and Ipopt
-include("../ExtSolvers/solvers.jl")
+# include("../ExtSolvers/solvers.jl")
 
 # Other packages available
 
@@ -105,6 +108,6 @@ end
 #   labels[i] = string(labels[i], string(" ", string(options[i][:eps1])))
 # end
 
-include("../compare_solvers.jl")
+include("../compare_solversLS.jl")
 
 s1, P1, t1, Pt1 = compare_solvers_with_options2(solvers, options, labels, test_probs, n_min, n_max, printskip = false)

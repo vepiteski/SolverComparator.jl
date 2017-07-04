@@ -43,20 +43,28 @@ function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: St
     h_h = 0
     try
         tic()
-        (x, f, gNorm, iter, optimal, tired, status) = solver(nlp; args...)
+        (x, f, gNorm, iter, optimal, tired, status, h_f, h_g, h_h) = solver(nlp; args...)
+        # print_with_color(:yellow,"après try \n")
+        # println("h_f=",h_f," h_g=",h_g," h_h=",h_h)
         elapsed_time = toq()
     catch e
         #  println(e)
         try status = e.msg
         catch
             println("Untraced exception")
-            (x, f, gNorm, iter, optimal, tired, status) = solver(nlp; args...)
+            (x, f, gNorm, iter, optimal, tired, status, h_f, h_g, h_h) = solver(nlp; args...)
+            # print_with_color(:yellow,"après catch \n")
+            # println("h_f=",h_f," h_g=",h_g," h_h=",h_h)
         end
     end
+    # print_with_color(:yellow,"après try/catch \n")
+    # println("iter=",iter," f=",f," gNorm=",gNorm)
+    # println("h_f=",h_f," h_g=",h_g," h_h=",h_h)
     @printf("%-35s  %9.2e  %7.1e  %5d  %5d  %6d  %6d  %6d    %10.5f   %s",
                 label, f, gNorm,
                 nlp.counters.neval_obj, nlp.counters.neval_grad,
     nlp.counters.neval_hprod, nlp.counters.neval_hess, iter, elapsed_time, status)
+    println(" $h_f $h_g $h_h")
     return optimal ? (nlp.counters.neval_obj, nlp.counters.neval_grad, nlp.counters.neval_hprod, nlp.counters.neval_hess,  elapsed_time) : (-nlp.counters.neval_obj, -nlp.counters.neval_grad, -nlp.counters.neval_hprod, -nlp.counters.neval_hess, -max(elapsed_time,Inf))
 end
 
