@@ -9,7 +9,7 @@ pyplot()
 # select problem collection
 
 n_min = 20
-n_max = 500
+n_max = 50
 
 TestCUTEst = false
 
