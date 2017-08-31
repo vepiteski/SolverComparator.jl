@@ -22,15 +22,18 @@ end
 
 include("trust-region.jl")
 
-function Newtrunk(nlp :: AbstractNLPModel;
-                  atol :: Float64=1.0e-8, rtol :: Float64=1.0e-6,
-                  max_eval :: Int=5000,
-                  max_iter :: Int = 20000,
+function NewtrunkS(nlp :: AbstractNLPModel;
+                  stp :: TStopping = TStopping(),
                   bk_max :: Int=10,
                   monotone :: Bool=false,
                   nm_itmax :: Int=25,
                   verbose :: Bool=true)
 
+    atol = stp.atol
+    rtol = stp.rtol
+    max_eval = stp.max_eval
+    max_iter = stp.max_iter
+    
     n = nlp.meta.nvar
     x = copy(nlp.meta.x0)
     #max_f == 0 && (max_f = max(min(100, 2 * n), 5000))
@@ -170,7 +173,7 @@ function Newtrunk(nlp :: AbstractNLPModel;
             f = ft
             ∇f = grad(nlp, x)
             ∇fNorm2 = BLAS.nrm2(n, ∇f, 1)
-            norm_g = stop_norm(∇f)
+            norm_g = stp.optimality_residual(∇f)
         end
         
         verbose && @printf("%8.1e  %5d  %2d  %s\n", ρ, length(cg_stats.residuals), bk, cg_stats.status)

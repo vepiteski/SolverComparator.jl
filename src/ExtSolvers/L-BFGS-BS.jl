@@ -2,6 +2,8 @@ export LbfgsBS
 
 
 function LbfgsBS(nlp :: AbstractNLPModel;
+                 lb=[],
+                 ub=[],
                  stp :: TStopping = TStopping(),
                  verbose :: Bool=false,
                  m :: Int=5,
@@ -9,8 +11,8 @@ function LbfgsBS(nlp :: AbstractNLPModel;
     n = nlp.meta.nvar
     x₀ = copy(nlp.meta.x0)
     
-    g = Array(Float64,n)
-    g₀ = Array(Float64,n)
+    g = Array{Float64}(n)
+    g₀ = Array{Float64}(n)
     g = grad(nlp,x₀)
     grad!(nlp,x₀,g₀)
 
@@ -19,14 +21,16 @@ function LbfgsBS(nlp :: AbstractNLPModel;
     #end
 
     
-    tolI = atol + rtol * norm(g₀,Inf) 
-    verbose && println("LbfgsB: atol = ",atol," rtol = ",rtol," tolI = ",tolI, " norm(g₀) = ",norm(g₀))
+    tolI = max(stp.atol , stp.rtol * norm(g₀,Inf)) 
+    verbose && println("LbfgsB: atol = ",stp.atol," rtol = ",stp.rtol," tolI = ",tolI, " norm(g₀) = ",norm(g₀))
 
     verblevel = verbose ? 1 : -1
     
     f, x, iterB, callB, status, optimal, unbounded, tired, elapsed_time  =
         lbfgsbS(nlp,
                 x₀,
+                lb=lb,
+                ub=ub,
                 m=m,
                 stp=stp,
                 iprint = verblevel,

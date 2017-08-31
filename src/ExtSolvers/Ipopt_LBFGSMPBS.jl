@@ -1,5 +1,5 @@
 function Ipopt_LBFGSMPBS(nlp :: AbstractNLPModel;
-                        s :: TStopping = TStopping(),
+                        stp :: TStopping = TStopping(),
                         verbose :: Bool = true
                         )                
     
@@ -7,15 +7,14 @@ function Ipopt_LBFGSMPBS(nlp :: AbstractNLPModel;
                           IpoptSolver(hessian_approximation="limited-memory",
                                       limited_memory_max_history=5,
                                       print_level = 0,
-                                      max_iter = s.max_iter,
-                                      tol = s.rtol,
-                                      max_cpu_time = s.max_time)
+                                      max_iter = stp.max_iter,
+                                      tol = stp.rtol,
+                                      max_cpu_time = stp.max_time)
                           );
     
     x0 = nlp.meta.x0
     g0 = grad(nlp,x0)
     norm_g0 = norm(g0,Inf)
-    ϵ = atol + rtol * norm_g0
     ret = MathProgBase.optimize!(IpoptModel)
     
     minx = IpoptModel.inner.x
@@ -27,7 +26,9 @@ function Ipopt_LBFGSMPBS(nlp :: AbstractNLPModel;
     
     iter = nlp.counters.neval_obj
     
-    optimal = (norm_g < ϵ) || (isinf(minf) & (minf<0.0))
+    #ϵ = stp.atol + stp.rtol * norm_g0
+    #optimal = (norm_g < ϵ) || (isinf(minf) & (minf<0.0))
+    optimal, unbounded, tired, elapsed_time = stop(nlp,stp,iter,minx,minf,ming)
     
     if optimal status = :Optimal
     else status = ret

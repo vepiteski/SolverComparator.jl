@@ -1,5 +1,5 @@
 using Optimize
-using SolverComparator
+#using SolverComparator
 using NLPModels
 
 using Plots
@@ -52,56 +52,91 @@ using Stopping
 stop_norm = ARCTR.stop_norm
 
 # solvers = [ ST_TROp,   Newtrunk,   ARCqKOp,  Newton]
-solvers = [CG_FRS, CG_FRS, CG_FRS, CG_FRS, CG_FRS, CG_FRS]
+#solvers = [CG_FRS, CG_FRS, CG_FRS, CG_FRS, CG_FRS, CG_FRS]
+#solvers = [CG_PRS, CG_PRS, CG_PRS, CG_PRS, CG_PRS, CG_PRS]
+solvers = [CG_HZS, CG_HZS, CG_HZS, CG_HZS, CG_HZS, CG_HZS]
 # solvers = [NewtonS, NewtonS, NewtonS, NewtonS, NewtonS, NewtonS]
 labels = []
 for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
 stop = TStopping(max_eval = 40_000)#, max_iter = 50_000)#, atol = 1e-4, rtol = 1e-5)
 
+#τ₀ = 0.00001
+#τ₁ = 0.001
 τ₀ = 0.00001
-τ₁ = 0.001
-additional_step = true
+τ₁ = 0.9
+#additional_step = true
+additional_step = false
 δ = 1_000.0
 symm = false
 epsillon1 = 0.1
 epsillon2 = 0.7
 ver_slope = true
 
+#options = [Dict{Symbol,Any}(:verbose => false, :stp => stop,
+#                            :linesearch => TR_Sec_ls, :τ₀ => τ₀,
+#                            :τ₁ => τ₁, :verboseLS => false, :Δ => 1_000.0,
+#                            :verbose => false, :add_step => additional_step,
+#                            :symetrique => symm,
+#                            :eps1 => epsillon1, :eps2 => epsillon2,
+#                            :check_slope => ver_slope)
+#           Dict{Symbol,Any}(:verbose => false, :stp => stop,
+#                            :linesearch => TR_SecA_ls, :τ₀ => τ₀, :Δ => 1_000.0,
+#                            :τ₁ => τ₁, :add_step => additional_step,
+#                            :symetrique => symm,
+#                            :eps1 => epsillon1, :eps2 => epsillon2,
+#                            :check_slope => ver_slope)
+#           Dict{Symbol,Any}(:verbose => false, :stp => stop, :Δ => 10.0,
+#                            :linesearch => TR_Cub_ls, :τ₀ => τ₀,
+#                            :τ₁ => τ₁, :add_step => additional_step,
+#                            :symetrique => symm, :eps1 => 0.001, :eps2 => 0.01,
+#                            :check_slope => ver_slope)
+#           Dict{Symbol,Any}(:verbose => false, :stp => stop, :Δ => 1_000.0,
+#                            :linesearch => TR_Nwt_ls, :τ₀ => τ₀,
+#                            :τ₁ => τ₁, :add_step => additional_step,
+#                            :symetrique => symm,
+#                            :eps1 => epsillon1, :eps2 => epsillon2,
+#                            :check_slope => ver_slope)
+#           Dict{Symbol,Any}(:verbose => false, :stp => stop, :τ₀ => τ₀,
+#                            :τ₁ => τ₁, :linesearch => Newarmijo_wolfe,
+#                            :check_slope => ver_slope)
+#           Dict{Symbol,Any}(:verbose => false, :stp => stop, :τ₀ => τ₀,
+#                            :τ₁ => τ₁, :linesearch => _hagerzhang2!,
+#                            :linesearchmax => 50, :mayterminate => true)
+#           ]
+
 options = [Dict{Symbol,Any}(:verbose => false, :stp => stop,
-                            :linesearch => TR_Sec_ls, :τ₀ => τ₀,
-                            :τ₁ => τ₁, :verboseLS => false, :Δ => 1_000.0,
+                            :linesearch => TR_Nwt_ls, :τ₀ => τ₀,
+                            :τ₁ => τ₁, :verboseLS => false, :Δ => 10.0,
                             :verbose => false, :add_step => additional_step,
                             :symetrique => symm,
                             :eps1 => epsillon1, :eps2 => epsillon2,
                             :check_slope => ver_slope)
            Dict{Symbol,Any}(:verbose => false, :stp => stop,
-                            :linesearch => TR_SecA_ls, :τ₀ => τ₀, :Δ => 1_000.0,
-                            :τ₁ => τ₁, :add_step => additional_step,
+                            :linesearch => TR_Nwt_ls, :τ₀ => τ₀, :Δ => 10.0,
+                            :τ₁ => τ₁/10.0, :add_step => additional_step,
                             :symetrique => symm,
                             :eps1 => epsillon1, :eps2 => epsillon2,
                             :check_slope => ver_slope)
            Dict{Symbol,Any}(:verbose => false, :stp => stop, :Δ => 10.0,
-                            :linesearch => TR_Cub_ls, :τ₀ => τ₀,
-                            :τ₁ => τ₁, :add_step => additional_step,
-                            :symetrique => symm, :eps1 => 0.001, :eps2 => 0.01,
-                            :check_slope => ver_slope)
-           Dict{Symbol,Any}(:verbose => false, :stp => stop, :Δ => 1_000.0,
                             :linesearch => TR_Nwt_ls, :τ₀ => τ₀,
-                            :τ₁ => τ₁, :add_step => additional_step,
-                            :symetrique => symm,
-                            :eps1 => epsillon1, :eps2 => epsillon2,
-                            :check_slope => ver_slope)
-           Dict{Symbol,Any}(:verbose => false, :stp => stop, :τ₀ => τ₀,
-                            :τ₁ => τ₁, :linesearch => Newarmijo_wolfe,
+                            :τ₁ => τ₁/100.0, :add_step => additional_step,
+                            :symetrique => symm, :eps1 => 0.001, :eps2 => 0.01,
                             :check_slope => ver_slope)
            Dict{Symbol,Any}(:verbose => false, :stp => stop, :τ₀ => τ₀,
                             :τ₁ => τ₁, :linesearch => _hagerzhang2!,
                             :linesearchmax => 50, :mayterminate => true)
+           Dict{Symbol,Any}(:verbose => false, :stp => stop, :τ₀ => τ₀,
+                            :τ₁ => τ₁/10.0, :linesearch => _hagerzhang2!,
+                            :linesearchmax => 50, :mayterminate => true)
+           Dict{Symbol,Any}(:verbose => false, :stp => stop, :τ₀ => τ₀,
+                            :τ₁ => τ₁/100.0, :linesearch => _hagerzhang2!,
+                            :linesearchmax => 50, :mayterminate => true)
            ]
 
+
 for i=1:size(labels)[1]
-  labels[i] = string(labels[i], string(" ", convert(String, (last(rsplit(string(options[i][:linesearch]), "."))))))
+  labels[i] = string(labels[i], string(" ", convert(String, (last(rsplit(string(options[i][:linesearch]), ".")))), string(options[i][:τ₁])  ))
 end
 
 # for i=1:5 #size(labels)[1]

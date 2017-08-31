@@ -11,7 +11,7 @@ using NLPModels
 
 # Optimize  --  two solvers,  trunk (:HesVec) and lbfgs (only :Grad)
 
-n=100
+n=20
 
 #probs = filter(name -> name != :OptimizationProblems 
 #                   && name != :sbrybnd
@@ -19,16 +19,16 @@ n=100
 #                   && name != :penalty3, names(OptimizationProblems))
 
 
-#mpb_probs = (MathProgNLPModel(eval(p)(n),  name=string(p) )   for p in probs)
-#sprob = :penalty2
-#tst_prob = MathProgNLPModel(eval(sprob)(n),  name=string(sprob) );
+mpb_probs = (MathProgNLPModel(eval(p)(n),  name=string(p) )   for p in probs)
+sprob = :penalty2
+tst_prob = MathProgNLPModel(eval(sprob)(n),  name=string(sprob) );
 
 # CUTEst collection
 #include("CUTEstProblems.jl")
 
-using CUTEst
+#using CUTEst
 
-prob = CUTEstModel("SCURLY10")
+#prob = CUTEstModel("SCURLY10")
 
 using ARCTR
 

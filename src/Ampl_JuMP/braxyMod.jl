@@ -46,7 +46,7 @@ function braxy(n :: Int=32; xn :: Float64 = 5.0)
     @NLobjective(
                     nlp,
                     Min,
-                    sum{f[i], i = 2:n-1} + f1 + fn
+                    sum(f[i] for i = 2:n - 1) + f1 + fn
                     )
 
   return nlp

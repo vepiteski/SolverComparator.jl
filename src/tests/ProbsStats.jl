@@ -2,14 +2,15 @@ using NLPModels
 
 TestCUTEst = false
 
-include("CUTEstProblems.jl")
-test_probs = cute_probs
-TestCUTEst = true
+#include("CUTEstProblems.jl")
+#probs = open(readlines,"CUTEstUnc.list")
+#test_probs = (CUTEstModel(p)  for p in probs)
+#TestCUTEst = true
 
 # Math Prog Base collection
-#n_max = 100
-#include("MPBProblems.jl")
-#test_probs = mpb_probs
+n_max = 100
+include("MPBProblems.jl")
+test_probs = mpb_probs
 
 # Ampl collection
 #include("AmplProblems.jl")

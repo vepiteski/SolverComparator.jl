@@ -36,9 +36,9 @@ function msqrtals()
     @NLobjective(
                  nlp,
                  Min,
-                 sum{sum{
-                         (sum{x[i,t]*x[t,j], t=1:P}-A[i,j])^2,
-                 i = 1:P}, j = 1:P}
+                 sum(sum(
+                         (sum(x[i,t]*x[t,j] for t=1:P)-A[i,j])^2
+                   for  i = 1:P) for j = 1:P)
                  )
     return nlp
 end

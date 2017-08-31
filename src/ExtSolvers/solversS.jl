@@ -3,8 +3,8 @@ using MathProgBase
 
 # LBFGSB -- one solver
 using Lbfgsb
-#include("L-BFGS-B.jl")
-#include("L-BFGS-BS.jl")
+include("L-BFGS-B.jl")
+include("L-BFGS-BS.jl")
 
 
 # NLopt (7 gradient based solvers)
@@ -30,4 +30,3 @@ push!(IpoptSolvers,Ipopt_NMPBS)
 
 # trunk   with signature standardized
 include("trunk.jl")
-include("trunkS.jl")

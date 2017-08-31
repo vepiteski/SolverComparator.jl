@@ -1,8 +1,6 @@
 export LbfgsB
 
 function LbfgsB(nlp :: AbstractNLPModel;
-                lb=[],
-                ub=[],
                 atol :: Float64=1.0e-8, rtol :: Float64=1.0e-6,
                 max_eval :: Int=5000,
                 max_iter :: Int = 20000,
@@ -11,8 +9,8 @@ function LbfgsB(nlp :: AbstractNLPModel;
     n = nlp.meta.nvar
     x₀ = copy(nlp.meta.x0)
 
-    g = Array(Float64,n)
-    g₀ = Array(Float64,n)
+    g = Array{Float64}(n)
+    g₀ = Array{Float64}(n)
     g = grad(nlp,x₀)
     grad!(nlp,x₀,g₀)
 
@@ -23,16 +21,14 @@ function LbfgsB(nlp :: AbstractNLPModel;
 
     
     tolI = atol + rtol * norm(g₀,Inf) 
-    verbose && println("LbfgsB: atol = ",atol," rtol = ",rtol," tolI = ",tolI, " norm(g₀) = ",norm(g₀,Inf), "f(x₀)", obj(nlp,x₀))
+    verbose && println("LbfgsB: atol = ",atol," rtol = ",rtol," tolI = ",tolI, " norm(g₀) = ",norm(g₀))
 
     verblevel = verbose ? 1 : -1
     
     f, x, iterB, callB, status  = lbfgsb(_ogFunc!,
-                                         x₀;
-                                         lb=lb,
-                                         ub=ub,
+                                         x₀, 
                                          m=m,
-                                         maxiter = min(max_iter,Int(round(max_eval/2))),
+                                         maxiter = min(max_iter,max_eval),
                                          iprint = verblevel,
                                          factr = 0.0,
                                          pgtol = tolI)
@@ -52,4 +48,3 @@ function LbfgsB(nlp :: AbstractNLPModel;
 
     return (x, f, gNorm, iterB, optimal, tired, status)
 end
-

@@ -15,12 +15,13 @@ include("solvers.jl")
 
 # L-BFGS-B  --  one solver; uses only :Grad
 # uncomment if you have access to L-BFGS-B
-#using Lbfgsb
-#include("../ExtSolvers/L-BFGS-B.jl")
+using Lbfgsb
+include("../ExtSolvers/L-BFGS-B.jl")
+include("../ExtSolvers/L-BFGS-BS.jl")
 
-using SolverComparator
+#using SolverComparator
 
-Ext_solvers = IpoptSolvers ∪ NLoptSolvers  # ∪ [LbfgsB]
+Ext_solvers = IpoptSolvers ∪ NLoptSolvers  ∪ [LbfgsB LbfgsBS]
 include("genrose.jl")
 
 for s in Ext_solvers

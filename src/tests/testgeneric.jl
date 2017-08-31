@@ -1,6 +1,6 @@
 using Optimize
 #using BenchmarkProfiles
-using SolverComparator
+#using SolverComparator
 using NLPModels
 
 using Plots
@@ -9,7 +9,7 @@ pyplot()
 # select problem collection
 
 n_min = 20
-n_max = 50
+n_max = 500
 
 TestCUTEst = false
 
@@ -41,32 +41,42 @@ include("../ExtSolvers/solvers.jl")
 # Other packages available
 
 # L-BFGS-B  --  one solver; uses only :Grad
-using Lbfgsb
-include("../ExtSolvers/L-BFGS-B.jl")
+#using Lbfgsb
+#include("../ExtSolvers/L-BFGS-B.jl")
 
 using ARCTR
 
 
 
-stop_norm = ARCTR.stop_norm
-atol=1.0e-6
+#stop_norm = ARCTR.stop_norm
+atol=1.0e-5
 rtol=1.0e-10
 
-#solvers = [TRMA57_absNew, TRMA57_abs, TRMA57Old, TRMA57New]
+#solvers = [ARCMA57_absS]
+#solvers = [TRMA57_absOld, TRMA57_abs, TRMA57_absS]
 #solvers = [TRKOpS, ARCqKOpS, ST_TROpS,LbfgsB]#, LbfgsB]
-#solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, Ipopt_NMPB]#, LbfgsB]
-solvers = [ST_TROpS, ARCqKOpS, LbfgsBS, Ipopt_LBFGSMPBS]
+solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS]#ARCMA57_absS, ARCMA57S]#, LbfgsB]
+#solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
+#solvers = [ARCMA57_absS, ARCMA97_absS, ARCSpectral_absS,ARCLDLt_absS]#, LbfgsB]
+#solvers = [TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
+#solvers = [ST_TROpS, ARCqKOpS, LbfgsBS, Ipopt_LBFGSMPBS]
 #solvers = [TRLDLt_absS, ARCLDLt_absS, ARCLDLtS, TRLDLtS]
 #solvers = [TRLDLt_abs, TRLDLtNew, TRLDLt_absNew]
 #solvers = [TRMA57_absNew, TRMA57_absNew]
 labels = []
 for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
+labels[4] = string(labels[4],"Monotone")
+stop = TStopping(atol = atol, rtol = rtol, max_iter = 100000, max_eval = 100000, max_time = 50.0)
 
-stop = TStopping(atol = atol, rtol = rtol, max_iter = 100000, max_eval = 100000, max_time = 1.0)
-
-options = [Dict{Symbol,Any}(:verbose=>false, :s => stop)
-           Dict{Symbol,Any}(:verbose=>false, :s => stop)
+options = [
+           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stop, :monotone => true)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
            Dict{Symbol,Any}(:verbose=>false, :stp => stop)
            Dict{Symbol,Any}(:verbose=>false, :s => stop)
            Dict{Symbol,Any}(:verbose=>false, :max_iter => 100000,  :max_eval => 100000, :atol=> atol, :rtol => rtol)#, :robust

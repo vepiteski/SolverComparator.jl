@@ -30,4 +30,3 @@ push!(IpoptSolvers,Ipopt_NMPBS)
 
 # trunk   with signature standardized
 include("trunk.jl")
-include("trunkS.jl")

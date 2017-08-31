@@ -6,5 +6,6 @@ probs = filter(
     && x != "MSQRTBLS\n",   # very long to solve
     probs)
 
+probs = ["PENALTY3","PENALTY3"]
 cute_probs = (CUTEstModel(p)  for p in probs)
 

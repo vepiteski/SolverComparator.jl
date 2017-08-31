@@ -7,8 +7,7 @@
 function compare_solvers_with_options(solvers, options, labels, probs, n_min, n_max; kwargs...)
   bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0)
                                                   || (model.meta.nvar < n_min)
-                                                  || (model.meta.nvar > n_max),
-                                 :max_eval => 20000)
+                                                  || (model.meta.nvar > n_max))
   stats = Dict{Symbol, Array{Int,2}}()
   for (solver,option,label) in zip(solvers,options,labels)
       @printf("\n\n\n running  %s with  %s\n\n", string(solver),string(option))
@@ -53,10 +52,10 @@ function solve_problem2(solver :: Function, nlp :: AbstractNLPModel, label :: St
             (x, f, gNorm, iter, optimal, tired, status) = solver(nlp; args...)
         end
     end
-    @printf("%-35s  %9.2e  %7.1e  %5d  %5d  %6d  %6d  %6d    %10.5f   %s",
-                label, f, gNorm,
-                nlp.counters.neval_obj, nlp.counters.neval_grad,
-    nlp.counters.neval_hprod, nlp.counters.neval_hess, iter, elapsed_time, status)
+    @printf("%-35s  %9.2e  %7.1e  %5d  %5d  %6d  %6d  %6d    %10.5f   %s\n",
+            label, f, gNorm,
+            nlp.counters.neval_obj, nlp.counters.neval_grad,
+            nlp.counters.neval_hprod, nlp.counters.neval_hess, iter, elapsed_time, status)
     return optimal ? (nlp.counters.neval_obj, nlp.counters.neval_grad, nlp.counters.neval_hprod, nlp.counters.neval_hess,  elapsed_time) : (-nlp.counters.neval_obj, -nlp.counters.neval_grad, -nlp.counters.neval_hprod, -nlp.counters.neval_hess, -max(elapsed_time,Inf))
 end
 
@@ -95,8 +94,8 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
             k += 1
             @printf("solver                                  f       ||∇f||      #f     #g      #Hv     #H    #iter       time    status\n\n")
             for (solver,option,label) in zip(solvers,options,labels)
-                (f, g, hv, h, t) =  solve_problem2(solver, problem, label; merge(bmark_args, option)...)
                 reset!(problem)
+                (f, g, hv, h, t) =  solve_problem2(solver, problem, label; merge(bmark_args, option)...)
                 stats[Symbol(label)][k,:] = [f, g, hv, h]
                 time[Symbol(label)][k] = t
             end
