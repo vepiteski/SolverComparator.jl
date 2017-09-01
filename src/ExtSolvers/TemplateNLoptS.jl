@@ -1,11 +1,12 @@
 @eval begin
     function $fname(nlp :: AbstractNLPModel;
-                    stp :: TStopping(),
+                    stp :: TStopping = TStopping(),
                     verbose :: Bool = true
                     )                
         NLoptModel = NLPtoMPB(nlp, 
                        NLoptSolver(algorithm=Symbol($fname),
                                    maxeval=stp.max_eval ÷ 2,
+                                   maxtime=stp.max_time,
                                    vector_storage = 5,
                                    xtol_abs = 0,
                                    ftol_abs = 0,

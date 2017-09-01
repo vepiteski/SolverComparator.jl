@@ -9,7 +9,7 @@ include("L-BFGS-BS.jl")
 
 # NLopt (7 gradient based solvers)
 using NLopt
-include("NLoptSolvers.jl")
+include("NLoptSolversS.jl")
 
 
 # Ipopt  --  2 solvers  (true hessian (uses :Hess) and limited memory approximation (needs only :Grad))
@@ -30,3 +30,4 @@ push!(IpoptSolvers,Ipopt_NMPBS)
 
 # trunk   with signature standardized
 include("trunk.jl")
+include("trunkS.jl")

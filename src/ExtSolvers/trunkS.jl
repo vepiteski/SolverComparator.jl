@@ -44,7 +44,8 @@ function NewtrunkS(nlp :: AbstractNLPModel;
     
     iter = 0
     f = obj(nlp, x)
-    ∇f = grad(nlp, x)
+    #∇f = grad(nlp, x)
+    stp, ∇f = start!(nlp,stp,x)
     ∇fNorm2 = BLAS.nrm2(n, ∇f, 1)
     norm_g0 = stp.optimality_residual(∇f)
     norm_g = norm_g0
@@ -64,10 +65,11 @@ function NewtrunkS(nlp :: AbstractNLPModel;
     xt = Array{Float64}(n)
     temp = Array{Float64}(n)
     
-    calls = [nlp.counters.neval_obj,  nlp.counters.neval_grad, nlp.counters.neval_hess, nlp.counters.neval_hprod]
+    #calls = [nlp.counters.neval_obj,  nlp.counters.neval_grad, nlp.counters.neval_hess, nlp.counters.neval_hprod]
         
-    optimal = (norm_g0 < atol) | (isinf(f) & (f<0.0))
-    tired = (iter >= max_iter) | (sum(calls) > max_eval)
+    #optimal = (norm_g0 < atol) | (isinf(f) & (f<0.0))
+    #tired = (iter >= max_iter) | (sum(calls) > max_eval)
+    optimal, unbounded, tired, elapsed_time = stop(nlp,stp,iter,x,f,∇f)
     #optimal = ∇fNorm2 <= ϵ
     #tired = nlp.counters.neval_obj > max_f
     stalled = false
@@ -77,7 +79,7 @@ function NewtrunkS(nlp :: AbstractNLPModel;
         @printf("%4d  %9.2e  %7.1e  %7.1e  ", iter, f, ∇fNorm2, get_property(tr, :radius))
     end
     
-    while !(optimal || tired || stalled)
+    while !(optimal || tired || stalled || unbounded)
         iter = iter + 1
         
         # Compute inexact solution to trust-region subproblem
@@ -184,9 +186,11 @@ function NewtrunkS(nlp :: AbstractNLPModel;
         verbose && @printf("%4d  %9.2e  %7.1e  %7.1e  ", iter, f, ∇fNorm2, get_property(tr, :radius))
         
         calls = [nlp.counters.neval_obj,  nlp.counters.neval_grad, nlp.counters.neval_hess, nlp.counters.neval_hprod]
-        
-        optimal = (norm_g < atol)| (norm_g <( rtol * norm_g0)) | (isinf(f) & (f<0.0))
-        tired = (iter >= max_iter) | (sum(calls) > max_eval)
+
+        optimal, unbounded, tired, elapsed_time = stop(nlp,stp,iter,x,f,∇f)
+
+        #optimal = (norm_g < atol)| (norm_g <( rtol * norm_g0)) | (isinf(f) & (f<0.0))
+        #tired = (iter >= max_iter) | (sum(calls) > max_eval)
         #optimal = ∇fNorm2 <= ϵ
         #tired = nlp.counters.neval_obj > max_f
     end

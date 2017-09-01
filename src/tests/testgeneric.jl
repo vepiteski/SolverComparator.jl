@@ -9,7 +9,7 @@ pyplot()
 # select problem collection
 
 n_min = 20
-n_max = 50
+n_max = 10000
 
 TestCUTEst = false
 
@@ -17,26 +17,25 @@ TestCUTEst = false
 # Uncomment only one of mpb, ampl or cutest
 
 # Math Prog Base collection
-include("MPBProblems.jl")
-test_probs = mpb_probs
+#include("MPBProblems.jl")
+#test_probs = mpb_probs
 
 # Ampl collection
 #include("AmplProblems.jl")
 #test_probs = ampl_probs
 
 # CUTEst collection
-#include("CUTEstProblems.jl")
-#test_probs = cute_probs
-#TestCUTEst = true
+include("CUTEstProblems.jl")
+test_probs = cute_probs
+TestCUTEst = true
 
 
 # Select solvers
 #using LineSearch
 using Stopping
-#using LSDescentMethods
 
 # official julia packages:  NLopt and Ipopt
-include("../ExtSolvers/solvers.jl")
+include("../ExtSolvers/solversS.jl")
 
 # Other packages available
 
@@ -45,7 +44,7 @@ include("../ExtSolvers/solvers.jl")
 #include("../ExtSolvers/L-BFGS-B.jl")
 
 using ARCTR
-
+using LSDescentMethods
 
 
 #stop_norm = ARCTR.stop_norm
@@ -55,7 +54,7 @@ rtol=1.0e-10
 #solvers = [ARCMA57_absS]
 #solvers = [TRMA57_absOld, TRMA57_abs, TRMA57_absS]
 #solvers = [TRKOpS, ARCqKOpS, ST_TROpS,LbfgsB]#, LbfgsB]
-solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS]#ARCMA57_absS, ARCMA57S]#, LbfgsB]
+solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS, Newton,LD_TNEWTON_PRECOND]#ARCMA57_absS, ARCMA57S]#, LbfgsB]
 #solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
 #solvers = [ARCMA57_absS, ARCMA97_absS, ARCSpectral_absS,ARCLDLt_absS]#, LbfgsB]
 #solvers = [TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
@@ -67,18 +66,18 @@ labels = []
 for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
 labels[4] = string(labels[4],"Monotone")
-stop = TStopping(atol = atol, rtol = rtol, max_iter = 100000, max_eval = 100000, max_time = 50.0)
+stp = TStopping(atol = atol, rtol = rtol, max_iter = 1000000, max_eval = 1000000, max_time = 100.0)
 
 options = [
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop, :monotone => true)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :s => stop)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp, :monotone => true)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :s => stp)
            Dict{Symbol,Any}(:verbose=>false, :max_iter => 100000,  :max_eval => 100000, :atol=> atol, :rtol => rtol)#, :robust
            ]
 
