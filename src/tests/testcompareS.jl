@@ -45,20 +45,20 @@ using ARCTR
 
 atol = 1.0e-5
 rtol = 1.0e-10
-stop = TStopping(atol = atol, rtol = rtol, max_iter = 10000, max_eval = 10000, max_time = 50.0)
+stp = TStopping(atol = atol, rtol = rtol, max_iter = 10000, max_eval = 10000, max_time = 50.0)
 
 
-stop_norm = ARCTR.stop_norm
-solvers = [ ST_TROp,   Newtrunk,   ARCqKOp,  ST_TROpS,   NewtrunkS,   ARCqKOpS]
+#stop_norm = ARCTR.stop_norm
+solvers = [ ST_TROpS,   NewtrunkS,   ARCqKOpS]
 labels = []
 for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
-options = [Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> atol, :rtol => rtol) 
-           Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> atol, :rtol => rtol) 
-           Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> atol, :rtol => rtol) 
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stop)
+options = [#Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> atol, :rtol => rtol) 
+           #Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> atol, :rtol => rtol) 
+           #Dict{Symbol,Any}(:verbose=>false, :max_iter => 10000, :atol=> atol, :rtol => rtol) 
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
+           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
            ]
 
 include("../compare_solvers.jl")
@@ -67,7 +67,7 @@ s1, P1 = compare_solvers_with_options(solvers, options, labels, test_probs, n_mi
 
 s2, P2, t2, Pt2 = compare_solvers_with_options2(solvers, options, labels, test_probs, n_min, n_max, printskip = false)
 
-s1b = Dict{Symbol, Array{Int,2}}()
-for s in solvers s1b[Symbol(convert(String,(last(rsplit(string(s),".")))))] = s2[Symbol(convert(String,(last(rsplit(string(s),".")))))][:, 1:3] end
+#s1b = Dict{Symbol, Array{Int,2}}()
+#for s in solvers s1b[Symbol(convert(String,(last(rsplit(string(s),".")))))] = s2[Symbol(convert(String,(last(rsplit(string(s),".")))))][:, 1:3] end
 
-@test s1b == s1
+#@test s1b == s1

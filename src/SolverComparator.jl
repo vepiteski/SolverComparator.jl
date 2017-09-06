@@ -11,7 +11,7 @@ using Stopping
 include("compare_solvers.jl")
 #export compare_solvers
 
-include("ExtSolvers/solvers.jl")
+include("ExtSolvers/solversS.jl")
 
 
 end # module

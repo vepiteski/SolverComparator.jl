@@ -3,7 +3,7 @@ using MathProgBase
 
 # LBFGSB -- one solver
 using Lbfgsb
-include("L-BFGS-B.jl")
+#include("L-BFGS-B.jl")
 include("L-BFGS-BS.jl")
 
 
@@ -16,18 +16,18 @@ include("NLoptSolversS.jl")
 IpoptSolvers = Function[]
 
 using Ipopt
-include("Ipopt_LBFGSMPB.jl")
-push!(IpoptSolvers,Ipopt_LBFGSMPB)
+#include("Ipopt_LBFGSMPB.jl")
+#push!(IpoptSolvers,Ipopt_LBFGSMPB)
 
 include("Ipopt_LBFGSMPBS.jl")
 push!(IpoptSolvers,Ipopt_LBFGSMPBS)
 
-include("Ipopt_NMPB.jl")
-push!(IpoptSolvers,Ipopt_NMPB)
+#include("Ipopt_NMPB.jl")
+#push!(IpoptSolvers,Ipopt_NMPB)
 
 include("Ipopt_NMPBS.jl")
 push!(IpoptSolvers,Ipopt_NMPBS)
 
 # trunk   with signature standardized
-include("trunk.jl")
+#include("trunk.jl")
 include("trunkS.jl")

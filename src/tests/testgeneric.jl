@@ -4,12 +4,12 @@ using Optimize
 using NLPModels
 
 using Plots
-pyplot()
+#pyplot()
 
 # select problem collection
 
 n_min = 20
-n_max = 10000
+n_max = 50
 
 TestCUTEst = false
 
@@ -17,17 +17,17 @@ TestCUTEst = false
 # Uncomment only one of mpb, ampl or cutest
 
 # Math Prog Base collection
-#include("MPBProblems.jl")
-#test_probs = mpb_probs
+include("MPBProblems.jl")
+test_probs = mpb_probs
 
 # Ampl collection
 #include("AmplProblems.jl")
 #test_probs = ampl_probs
 
 # CUTEst collection
-include("CUTEstProblems.jl")
-test_probs = cute_probs
-TestCUTEst = true
+#include("CUTEstProblems.jl")
+#test_probs = cute_probs
+#TestCUTEst = true
 
 
 # Select solvers
@@ -51,10 +51,10 @@ using LSDescentMethods
 atol=1.0e-5
 rtol=1.0e-10
 
-#solvers = [ARCMA57_absS]
+#solvers = [ARCMA57_absS,TRMA57_absS]
 #solvers = [TRMA57_absOld, TRMA57_abs, TRMA57_absS]
 #solvers = [TRKOpS, ARCqKOpS, ST_TROpS,LbfgsB]#, LbfgsB]
-solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS, Newton,LD_TNEWTON_PRECOND]#ARCMA57_absS, ARCMA57S]#, LbfgsB]
+solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS]#, Newton,LD_TNEWTON_PRECOND]#ARCMA57_absS, ARCMA57S]#, LbfgsB]
 #solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
 #solvers = [ARCMA57_absS, ARCMA97_absS, ARCSpectral_absS,ARCLDLt_absS]#, LbfgsB]
 #solvers = [TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
