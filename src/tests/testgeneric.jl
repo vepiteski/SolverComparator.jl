@@ -4,7 +4,7 @@ using Optimize
 using NLPModels
 
 using Plots
-pyplot()
+#pyplot()
 
 # select problem collection
 
@@ -72,6 +72,8 @@ solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS]
 # provide options
 #
 ################
+stp = TStopping(atol = atol, rtol = rtol, max_iter = 1000000, max_eval = 1000000, max_time = 100.0)
+
 options = [
            Dict{Symbol,Any}(:verbose=>false, :stp => stp)
            Dict{Symbol,Any}(:verbose=>false, :stp => stp)
@@ -94,7 +96,6 @@ for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 #
 #################
 labels[4] = string(labels[4],"Monotone")
-stp = TStopping(atol = atol, rtol = rtol, max_iter = 1000000, max_eval = 1000000, max_time = 100.0)
 
 
 
