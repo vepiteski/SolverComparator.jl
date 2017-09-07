@@ -115,67 +115,9 @@ function compare_solvers_with_options2(solvers, options, labels, probs, n_min, n
     profiles = profile_solvers(stats; args...)
 
     args[:title] = " CPU time"
-    profiles_time = profile_solvers2(time; args...)
+    profiles_time = profile_solvers(time; args...)
     return stats, profiles, time, profiles_time
     return stats, profiles, time, profiles_time
 end
 
 
-if Pkg.installed("BenchmarkProfiles") != nothing
-  using BenchmarkProfiles
-
-  """
-      profile_solvers2(time :: Dict{Symbol, Float64}; title :: String="")
-
-  Plot a performance profile from solver statistics.
-
-  #### Arguments
-  * `time`: a dict of time such as obtained from `compare_solvers_with_options2()`
-
-  #### Keyword arguments
-  Any keyword argument accepted by `BenchmarkProfiles.performance_profile()`.
-
-  #### Return value
-  A profile as returned by `performance_profile()`.
-  """
-  function profile_solvers2(time :: Dict{Symbol, Array{Float64,1}}; kwargs...)
-    args = Dict(kwargs)
-    if haskey(args, :title)
-      args[:title] *= @sprintf(" (%d problems)", size(time[first(keys(time))], 1))
-    end
-    performance_profile(hcat([p for p in values(time)]...),
-                        collect(String, [string(s) for s in keys(time)]); args...)
-  end
-end
-
-
-############################################################################################
-# Old versions.
-
-# benchmark solvers on a set of problems
-function compare_solvers(solvers,probs,n_min,n_max;title:: String = " ", kwargs...)
-  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0)
-                                                  || (model.meta.nvar < n_min)
-                                                  || (model.meta.nvar > n_max),
-                                 :max_f => 20000)
-  profile_args = Dict{Symbol, Any}(:title => title)
-  stats, profiles = bmark_and_profile(solvers, probs,
-                                      bmark_args=bmark_args, profile_args=profile_args)
-  return stats, profiles
-end
-
-
-# Benchmark one solver with different options on a set of problems
-function compare_solver_options(solver :: Function, options, probs, n_min, n_max; kwargs...)
-  bmark_args = Dict{Symbol, Any}(:skipif => model -> (model.meta.ncon > 0)
-                                                  || (model.meta.nvar < n_min)
-                                                  || (model.meta.nvar > n_max),
-                                 :max_eval => 20000)
-  stats = Dict{Symbol, Array{Int,2}}()
-  for option in options
-      @printf("\n\n\n running %s\n\n", string(option))
-      stats[Symbol(option)] = solve_problems(solver, probs; merge(bmark_args, option)...)
-  end
-  profiles = profile_solvers(stats, title=string(solver))
-  return stats, profiles
-end
