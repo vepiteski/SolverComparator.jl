@@ -4,7 +4,7 @@ using Optimize
 using NLPModels
 
 using Plots
-#pyplot()
+pyplot()
 
 # select problem collection
 
@@ -31,7 +31,7 @@ test_probs = mpb_probs
 
 
 # Select solvers
-#using LineSearch
+
 using Stopping
 
 # official julia packages:  NLopt and Ipopt
@@ -46,44 +46,61 @@ include("../ExtSolvers/solversS.jl")
 using ARCTR
 using LSDescentMethods
 
-
-#stop_norm = ARCTR.stop_norm
 atol=1.0e-5
 rtol=1.0e-10
 
+
+
+#######################################
+#
+#  Several comparison examples
+#
+######################################
+
 #solvers = [ARCMA57_absS,TRMA57_absS]
-#solvers = [TRMA57_absOld, TRMA57_abs, TRMA57_absS]
-#solvers = [TRKOpS, ARCqKOpS, ST_TROpS,LbfgsB]#, LbfgsB]
-solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS]#, Newton,LD_TNEWTON_PRECOND]#ARCMA57_absS, ARCMA57S]#, LbfgsB]
-#solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
-#solvers = [ARCMA57_absS, ARCMA97_absS, ARCSpectral_absS,ARCLDLt_absS]#, LbfgsB]
-#solvers = [TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]#, LbfgsB]
+#solvers = [TRKOpS, ARCqKOpS, ST_TROpS,LbfgsB]
+solvers = [ST_TROpS, ARCqKOpS, NewtrunkS, NewtrunkS]
+#solvers = [TRMA57_absS, ARCMA57_absS, TRMA57S, ARCMA57S, TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]
+#solvers = [ARCMA57_absS, ARCMA97_absS, ARCSpectral_absS,ARCLDLt_absS]
+#solvers = [TRMA97_absS, ARCMA97_absS, TRMA97S, ARCMA97S, Ipopt_NMPBS]
 #solvers = [ST_TROpS, ARCqKOpS, LbfgsBS, Ipopt_LBFGSMPBS]
 #solvers = [TRLDLt_absS, ARCLDLt_absS, ARCLDLtS, TRLDLtS]
-#solvers = [TRLDLt_abs, TRLDLtNew, TRLDLt_absNew]
-#solvers = [TRMA57_absNew, TRMA57_absNew]
-labels = []
-for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
 
-labels[4] = string(labels[4],"Monotone")
-stp = TStopping(atol = atol, rtol = rtol, max_iter = 1000000, max_eval = 1000000, max_time = 100.0)
 
+#################
+#
+# provide options
+#
+################
 options = [
            Dict{Symbol,Any}(:verbose=>false, :stp => stp)
            Dict{Symbol,Any}(:verbose=>false, :stp => stp)
            Dict{Symbol,Any}(:verbose=>false, :stp => stp)
            Dict{Symbol,Any}(:verbose=>false, :stp => stp, :monotone => true)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
-           Dict{Symbol,Any}(:verbose=>false, :stp => stp)
-           Dict{Symbol,Any}(:verbose=>false, :s => stp)
-           Dict{Symbol,Any}(:verbose=>false, :max_iter => 100000,  :max_eval => 100000, :atol=> atol, :rtol => rtol)#, :robust
            ]
+
+
+####################
+#
+# strip the solver's name from its module prefix
+#
+###################
+labels = []
+for s in solvers push!(labels,convert(String,(last(rsplit(string(s),"."))))) end
+
+##################
+#
+# in case of identical solvers with distinc options, edit the solver's name to avoid identical labels
+#
+#################
+labels[4] = string(labels[4],"Monotone")
+stp = TStopping(atol = atol, rtol = rtol, max_iter = 1000000, max_eval = 1000000, max_time = 100.0)
+
 
 
 include("../compare_solvers.jl")
 
 s1, P1, t1, Pt1 = compare_solvers_with_options2(solvers, options, labels, test_probs, n_min, n_max, printskip = false)
+
 
 TestCUTEst && include("CleanCUTE.jl")
